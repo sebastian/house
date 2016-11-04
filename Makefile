@@ -1,4 +1,4 @@
 .PHONY: start
 
 start:
-	iex -S mix phoenix.server
+	bash -c "source .env && iex -S mix phoenix.server"

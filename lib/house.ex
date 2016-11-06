@@ -8,7 +8,9 @@ defmodule House do
 
     # Define workers and child supervisors to be supervised
     children = [
+      worker(House.Presence, []),
       worker(House.Hue, []),
+      worker(House.Lights, []),
       supervisor(House.Endpoint, []),
     ]
 

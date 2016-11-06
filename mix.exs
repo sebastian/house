@@ -20,6 +20,7 @@ defmodule House.Mixfile do
       mod: {House, []},
       applications: [
         :phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext, :httpoison,
+        :timex,
       ]
     ]
   end
@@ -37,6 +38,7 @@ defmodule House.Mixfile do
      {:phoenix_pubsub, "~> 1.0"},
      {:phoenix_html, "~> 2.6"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
+     {:timex, "~> 3.0"},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"}]
   end

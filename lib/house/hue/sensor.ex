@@ -1,16 +1,46 @@
 defmodule House.Hue.Sensor do
   @moduledoc false
 
+  @type t :: %__MODULE__{
+    id: String.t,
+    temperature: non_neg_integer,
+    presence: boolean,
+    battery: non_neg_integer,
+    on: boolean,
+    name: String.t,
+    dark: boolean,
+    daylight: boolean,
+    lightlevel: non_neg_integer,
+    lux: float,
+    last_updated: String.t,
+  }
+
+  defstruct [
+    id: "unknown",
+    temperature: 0,
+    presence: false,
+    battery: 100,
+    on: true,
+    name: "unknown name",
+    dark: false,
+    daylight: false,
+    lightlevel: 0,
+    lux: 0,
+    last_updated: "",
+  ]
+
+  alias House.Hue.Sensor
+
 
   # -------------------------------------------------------------------
   # API
   # -------------------------------------------------------------------
 
   def from_data({id, sensor_data}) do
-    default = %{
+    default = %Sensor{
       id: id
     }
-    state = Enum.reduce(sensor_data, default, &read_state/2)
+    Enum.reduce(sensor_data, default, &read_state/2)
   end
 
 
@@ -19,20 +49,28 @@ defmodule House.Hue.Sensor do
   # -------------------------------------------------------------------
 
   defp read_state(%{"type" => "ZLLTemperature"} = data, state) do
-    state
-    |> Map.put(:temperature, data["state"]["temperature"])
+    %Sensor{state | temperature: data["state"]["temperature"]}
   end
   defp read_state(%{"type" => "ZLLPresence"} = data, state) do
-    state
-    |> Map.put(:presence, data["state"]["presence"])
-    |> Map.put(:battery, data["config"]["battery"])
-    |> Map.put(:on, data["config"]["on"])
-    |> Map.put(:name, data["name"])
+    {:ok, timestamp} = Timex.parse(data["state"]["lastupdated"],
+      "{YYYY}-{M}-{D}T{h24}:{m}:{s}")
+    %Sensor{ state |
+      presence: data["state"]["presence"],
+      last_updated: timestamp,
+      battery: data["config"]["battery"],
+      on: data["config"]["on"],
+      name: data["name"],
+    }
   end
   defp read_state(%{"type" => "ZLLLightLevel"} = data, state) do
-    state
-    |> Map.put(:dark, data["state"]["dark"])
-    |> Map.put(:daylight, data["state"]["daylight"])
-    |> Map.put(:lightlevel, data["state"]["lightlevel"])
+    lightlevel = data["state"]["lightlevel"]
+    %Sensor{ state |
+      dark: data["state"]["dark"],
+      daylight: data["state"]["daylight"],
+      lightlevel: lightlevel,
+      lux: to_lux(lightlevel),
+    }
   end
+
+  defp to_lux(lightlevel), do: :math.pow(10, (lightlevel-1)/10000)
 end

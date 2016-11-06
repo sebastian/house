@@ -110,17 +110,28 @@ defmodule House.Lights do
     Enum.reduce(rooms, %{}, fn(room, map) -> Map.put(map, room.name, room) end)
 
   defp adjust_primary_lights(room) do
-    brightness = 254
-    Enum.each(room.lights, &House.Hue.set_primary_light(&1, brightness))
+    action = %{
+      "on" => true,
+      "bri" => max_brightness(),
+    }
+    Enum.each(room.lights, &House.Hue.set_primary_light(&1, action))
   end
 
   defp adjust_secondary_lights(room) do
-    brightness = brightness(room)
-    Enum.each(room.lights, &House.Hue.set_secondary_light(&1, brightness))
+    action = %{
+      "on" => true,
+      "bri" => brightness(room),
+    }
+    Enum.each(room.lights, &House.Hue.set_secondary_light(&1, action))
   end
 
-  defp turn_off_lights(room), do:
-    Enum.each(room.lights, &House.Hue.turn_off_light(&1))
+  defp turn_off_lights(room) do
+    action = %{
+      "on" => false,
+      "transitiontime" => 30,
+    }
+    Enum.each(room.lights, &House.Hue.set_secondary_light(&1, action))
+  end
 
   defp brightness(room) do
     seconds = Timex.diff(Timex.now, room.last_updated, :seconds)
@@ -133,7 +144,11 @@ defmodule House.Lights do
     # Over five minutes we dim secondary rooms from bri 100% down to
     # @secondary_room_min_brightness, linearly.
     # The first minute it remains fully bright.
-    brightness_range = 254 - @secondary_room_min_brightness
+    brightness_range = max_brightness() - @secondary_room_min_brightness
     round(@secondary_room_min_brightness + brightness_range - (brightness_range * fraction_of_way_there))
+  end
+
+  defp max_brightness() do
+    180
   end
 end

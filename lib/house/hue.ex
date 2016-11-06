@@ -14,14 +14,11 @@ defmodule House.Hue do
   def start_link(), do:
     GenServer.start_link(__MODULE__, [], [name: __MODULE__])
 
-  def set_primary_light(light, brightness), do:
-    GenServer.cast(__MODULE__, {:schedule_primary_light, light, brightness})
+  def set_primary_light(light, action), do:
+    GenServer.cast(__MODULE__, {:schedule_primary_light, light, action})
 
-  def set_secondary_light(light, brightness), do:
-    GenServer.cast(__MODULE__, {:schedule_secondary_light, light, brightness})
-
-  def turn_off_light(light), do:
-    GenServer.cast(__MODULE__, {:turn_off, light})
+  def set_secondary_light(light, action), do:
+    GenServer.cast(__MODULE__, {:schedule_secondary_light, light, action})
 
   def last_reading(), do:
     GenServer.call(__MODULE__, :last_reading)
@@ -64,8 +61,7 @@ defmodule House.Hue do
     end
   end
 
-  def handle_cast({:schedule_primary_light, new_light, brightness}, state) do
-    action = %{"on" => true, "bri" => brightness}
+  def handle_cast({:schedule_primary_light, new_light, action}, state) do
     light_schedule = adapt_if_not_redundant(state.scheduled_primary_lights, new_light, action, state)
     new_secondary_schedule = state.scheduled_secondary_lights
       |> Enum.reject(fn({light, _}) -> light == new_light end)
@@ -76,17 +72,8 @@ defmodule House.Hue do
     {:noreply, state}
   end
 
-  def handle_cast({:schedule_secondary_light, light, brightness}, state) do
-    action = %{"on" => true, "bri" => brightness}
+  def handle_cast({:schedule_secondary_light, light, action}, state) do
     light_schedule = adapt_if_not_redundant(state.scheduled_secondary_lights, light, action, state)
-    {:noreply, %{state | scheduled_secondary_lights: light_schedule}}
-  end
-
-  def handle_cast({:turn_off, light}, state) do
-    action = %{
-      on: false
-    }
-    light_schedule = adapt_if_not_redundant(state.scheduled_secondary_lights, light, action,state)
     {:noreply, %{state | scheduled_secondary_lights: light_schedule}}
   end
 
@@ -143,6 +130,7 @@ defmodule House.Hue do
     action
     |> Enum.reject(fn({key, val}) -> light["state"][key] == val end)
     |> Enum.into(%{})
+    |> Map.update("transitiontime", 10, & &1)
   end
 
   defp get_light(light_name, state) do
@@ -192,7 +180,7 @@ defmodule House.Hue do
 
   defp adapt_if_not_redundant(schedule, name, action, state) do
     reduced_action = remove_redundant_settings(action, name, state)
-    if length(Map.keys(reduced_action)) == 0 do
+    if length(Map.keys(reduced_action)) == 1 do
       schedule
     else
       adapt_light_schedule(schedule, name, reduced_action)

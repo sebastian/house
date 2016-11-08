@@ -34,7 +34,7 @@ defmodule House.Lights do
 
   def init(_) do
     Logger.info("Init light control")
-    :timer.send_interval(:timer.seconds(2), :set_lights)
+    :timer.send_interval(200, :set_lights)
     {:ok, %{
       secondary_rooms: %{},
       primary_rooms: [],

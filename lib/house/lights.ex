@@ -23,9 +23,11 @@ defmodule House.Lights do
   # API
   # -------------------------------------------------------------------
 
-  def start_link() do
+  def start_link(), do:
     GenServer.start_link(__MODULE__, [], [name: __MODULE__])
-  end
+
+  def check_sensors(), do:
+    GenServer.cast(__MODULE__, :check_sensors)
 
 
   # -------------------------------------------------------------------
@@ -34,14 +36,13 @@ defmodule House.Lights do
 
   def init(_) do
     Logger.info("Init light control")
-    :timer.send_interval(200, :set_lights)
     {:ok, %{
-      secondary_rooms: %{},
+      secondary_rooms: [],
       primary_rooms: [],
     }}
   end
 
-  def handle_info(:set_lights, %{secondary_rooms: secondary_rooms} = state) do
+  def handle_cast(:check_sensors, %{secondary_rooms: secondary_rooms} = state) do
     rooms_by_name = Hue.rooms()
       |> by_name()
 
@@ -50,6 +51,7 @@ defmodule House.Lights do
       |> Enum.reject(& &1 == nil)
 
     primary_rooms_by_name = by_name(primary_rooms)
+    secondary_rooms_by_name = by_name(secondary_rooms)
 
     updated_secondary_rooms = Enum.reduce(primary_rooms, %{}, fn(room, secondaries) ->
       # Returns the secondary rooms for a room (i.e. neighbouring rooms),
@@ -61,7 +63,7 @@ defmodule House.Lights do
       secondaries_for_room(room, rooms_by_name)
       # Prefer the previously cached secondary room object, so the timestamp
       # previous timestamp remains intact.
-      |> Enum.map(&Map.get(secondary_rooms, &1.name, &1))
+      |> Enum.map(&Map.get(secondary_rooms_by_name, &1.name, &1))
       |> Enum.reduce(secondaries, &Map.put(&2, &1.name, &1))
     end)
     |> Map.values()
@@ -72,15 +74,17 @@ defmodule House.Lights do
       end
     end)
     |> by_name()
+    |> Map.values()
 
+    # We adjust all lights. If there are no changes, then the system will
+    # realise, and prevent the action from taking place.
     primary_rooms
     |> Enum.each(&adjust_primary_lights/1)
-
-    updated_secondary_rooms
-    |> Map.values()
+    secondary_rooms
     |> Enum.each(&adjust_secondary_lights/1)
 
-    primary_rooms ++ Map.values(updated_secondary_rooms)
+    # Turn off the lights in all rooms not in use
+    primary_rooms ++ updated_secondary_rooms
     |> Enum.map(& &1.name)
     |> Enum.reduce(rooms_by_name, &Map.delete(&2, &1))
     |> Map.values()
@@ -121,14 +125,14 @@ defmodule House.Lights do
     action = %{
       "on" => true,
       "bri" => brightness(room),
+      "transitiontime" => 8,
     }
     Enum.each(room.lights, &House.Hue.set_secondary_light(&1, action))
   end
 
   defp turn_off_lights(room) do
     action = %{
-      "on" => false,
-      "transitiontime" => 30,
+      "on" => false
     }
     Enum.each(room.lights, &House.Hue.set_secondary_light(&1, action))
   end

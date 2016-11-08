@@ -6,10 +6,6 @@ defmodule House.Hue do
   alias House.Hue.{Sensors, Rooms}
   alias House.Presence
 
-  # Only schedule secondary operations every N ticks.
-  # This reduces the overall load on the channel
-  @secondary_tick_delay 5
-
 
   # -------------------------------------------------------------------
   # API
@@ -44,7 +40,7 @@ defmodule House.Hue do
   def init(_) do
     Logger.info("Init hue")
     send(self(), :read_hue)
-    :timer.send_interval(:timer.seconds(2), :read_hue)
+    :timer.send_interval(:timer.seconds(1), :read_hue)
     :timer.send_interval(200, :update_lights)
     state = %{
       username: System.get_env("HUE_USERNAME"),
@@ -54,13 +50,6 @@ defmodule House.Hue do
       # Lights that should be controlled.
       scheduled_primary_lights: [],
       scheduled_secondary_lights: [],
-
-      # We only perform secondary scheduled light operations
-      # every N ticks, to reduce the amount of low priority
-      # events being broadcast by the Hue base station.
-      # The more traffic, the less likely it is that important
-      # traffic gets through.
-      secondary_tick: 0,
     }
     case find_endpoint() do
       {:ok, endpoint} ->
@@ -112,6 +101,7 @@ defmodule House.Hue do
     state
     |> sensors_from_state()
     |> Presence.update()
+    House.Lights.check_sensors()
     {:noreply, read_hue(state)}
   end
 
@@ -129,12 +119,9 @@ defmodule House.Hue do
     %{state | scheduled_primary_lights: lights}
   end
   defp run_light_schedules(%{scheduled_secondary_lights: []} = state), do: state
-  defp run_light_schedules(%{scheduled_secondary_lights: [light | lights], secondary_tick: 0} = state) do
+  defp run_light_schedules(%{scheduled_secondary_lights: [light | lights]} = state) do
     set_light(light, state)
-    %{state | scheduled_secondary_lights: lights, secondary_tick: 1}
-  end
-  defp run_light_schedules(%{secondary_tick: n} = state) do
-    %{state | secondary_tick: rem(n+1, @secondary_tick_delay)}
+    %{state | scheduled_secondary_lights: lights}
   end
 
   defp remove_redundant_settings(action, name, state) do
@@ -142,7 +129,6 @@ defmodule House.Hue do
     action
     |> Enum.reject(fn({key, val}) -> light["state"][key] == val end)
     |> Enum.into(%{})
-    |> Map.update("transitiontime", 10, & &1)
   end
 
   defp get_light(light_name, state) do
@@ -192,10 +178,13 @@ defmodule House.Hue do
 
   defp adapt_if_not_redundant(schedule, name, action, state) do
     reduced_action = remove_redundant_settings(action, name, state)
-    if length(Map.keys(reduced_action)) == 1 do
-      schedule
-    else
-      adapt_light_schedule(schedule, name, reduced_action)
+    case Map.keys(reduced_action) do
+      # If the only thing we should do is set a transition time,
+      # then that's not worth a call
+      ["transitiontime"] -> schedule
+      # No need for an empty schedule
+      [] -> schedule
+      _ -> adapt_light_schedule(schedule, name, reduced_action)
     end
   end
 

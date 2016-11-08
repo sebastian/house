@@ -51,7 +51,7 @@ defmodule House.Lights do
 
     primary_rooms_by_name = by_name(primary_rooms)
 
-    new_secondary_rooms = Enum.reduce(primary_rooms, %{}, fn(room, secondaries) ->
+    updated_secondary_rooms = Enum.reduce(primary_rooms, %{}, fn(room, secondaries) ->
       # Returns the secondary rooms for a room (i.e. neighbouring rooms),
       # and sets the last_updated timestamp to that of the primary room.
       # Hence when I enter the living room, the neighbouring bedroom has the
@@ -76,11 +76,11 @@ defmodule House.Lights do
     primary_rooms
     |> Enum.each(&adjust_primary_lights/1)
 
-    new_secondary_rooms
+    updated_secondary_rooms
     |> Map.values()
     |> Enum.each(&adjust_secondary_lights/1)
 
-    primary_rooms ++ Map.values(new_secondary_rooms)
+    primary_rooms ++ Map.values(updated_secondary_rooms)
     |> Enum.map(& &1.name)
     |> Enum.reduce(rooms_by_name, &Map.delete(&2, &1))
     |> Map.values()
@@ -89,9 +89,9 @@ defmodule House.Lights do
 
     state = %{state |
       primary_rooms: primary_rooms,
-      secondary_rooms: new_secondary_rooms,
+      secondary_rooms: updated_secondary_rooms,
     }
-    {:noreply, %{state | secondary_rooms: new_secondary_rooms}}
+    {:noreply, state}
   end
 
 

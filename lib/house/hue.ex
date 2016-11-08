@@ -6,6 +6,10 @@ defmodule House.Hue do
   alias House.Hue.{Sensors, Rooms}
   alias House.Presence
 
+  # Only schedule secondary operations every N ticks.
+  # This reduces the overall load on the channel
+  @secondary_tick_delay 5
+
 
   # -------------------------------------------------------------------
   # API
@@ -48,8 +52,15 @@ defmodule House.Hue do
       last_reading: %{},
 
       # Lights that should be controlled.
-      scheduled_secondary_lights: [],
       scheduled_primary_lights: [],
+      scheduled_secondary_lights: [],
+
+      # We only perform secondary scheduled light operations
+      # every N ticks, to reduce the amount of low priority
+      # events being broadcast by the Hue base station.
+      # The more traffic, the less likely it is that important
+      # traffic gets through.
+      secondary_tick: 0,
     }
     case find_endpoint() do
       {:ok, endpoint} ->
@@ -105,25 +116,26 @@ defmodule House.Hue do
   end
 
   def handle_info(:update_lights, state) do
-    state = case state.scheduled_primary_lights do
-      [] ->
-        case state.scheduled_secondary_lights do
-          [] -> state
-          [light | lights] ->
-            set_light(light, state)
-            %{state | scheduled_secondary_lights: lights}
-        end
-      [light | lights] ->
-        set_light(light, state)
-        %{state | scheduled_primary_lights: lights}
-    end
-    {:noreply, state}
+    {:noreply, run_light_schedules(state)}
   end
 
 
   # -------------------------------------------------------------------
   # Internal functions
   # -------------------------------------------------------------------
+
+  defp run_light_schedules(%{scheduled_primary_lights: [light | lights]} = state) do
+    set_light(light, state)
+    %{state | scheduled_primary_lights: lights}
+  end
+  defp run_light_schedules(%{scheduled_secondary_lights: []} = state), do: state
+  defp run_light_schedules(%{scheduled_secondary_lights: [light | lights], secondary_tick: 0} = state) do
+    set_light(light, state)
+    %{state | scheduled_secondary_lights: lights, secondary_tick: 1}
+  end
+  defp run_light_schedules(%{secondary_tick: n} = state) do
+    %{state | secondary_tick: rem(n+1, @secondary_tick_delay)}
+  end
 
   defp remove_redundant_settings(action, name, state) do
     light = get_light(name, state)

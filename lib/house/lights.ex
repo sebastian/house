@@ -3,7 +3,7 @@ defmodule House.Lights do
 
   require Logger
 
-  alias House.{Presence, Hue}
+  alias House.{Presence, Hue, Scene}
   alias House.Hue.Room
 
   @neighbouring_rooms %{
@@ -114,20 +114,25 @@ defmodule House.Lights do
     Enum.reduce(rooms, %{}, fn(room, map) -> Map.put(map, room.name, room) end)
 
   defp adjust_primary_lights(room) do
-    action = %{
-      "on" => true,
-      "bri" => max_brightness(),
-    }
-    Enum.each(room.lights, &House.Hue.set_primary_light(&1, action))
+    Enum.each(room.lights, fn(light) ->
+      action = %{
+        "on" => Scene.on(light),
+        "bri" => Scene.brightness(light),
+      }
+      House.Hue.set_primary_light(light, action)
+    end)
   end
 
   defp adjust_secondary_lights(room) do
-    action = %{
-      "on" => true,
-      "bri" => brightness(room),
-      "transitiontime" => 8,
-    }
-    Enum.each(room.lights, &House.Hue.set_secondary_light(&1, action))
+    Enum.each(room.lights, fn(light) ->
+      max_brightness = Scene.brightness(light)
+      action = %{
+        "on" => Scene.on(light),
+        "bri" => brightness(room, max_brightness),
+        "transitiontime" => 8,
+      }
+      House.Hue.set_secondary_light(light, action)
+    end)
   end
 
   defp turn_off_lights(room) do
@@ -137,7 +142,7 @@ defmodule House.Lights do
     Enum.each(room.lights, &House.Hue.set_secondary_light(&1, action))
   end
 
-  defp brightness(room) do
+  defp brightness(room, max_brightness) do
     seconds = Timex.diff(Timex.now, room.last_updated, :seconds)
     timespan = @min_secondary_fade_out_in_seconds - @min_secondary_remain_max_in_seconds
     current_seconds = min(
@@ -148,11 +153,7 @@ defmodule House.Lights do
     # Over five minutes we dim secondary rooms from bri 100% down to
     # @secondary_room_min_brightness, linearly.
     # The first minute it remains fully bright.
-    brightness_range = max_brightness() - @secondary_room_min_brightness
+    brightness_range = max_brightness - @secondary_room_min_brightness
     round(@secondary_room_min_brightness + brightness_range - (brightness_range * fraction_of_way_there))
-  end
-
-  defp max_brightness() do
-    180
   end
 end

@@ -31,21 +31,18 @@ defmodule House.Scene do
 
   def brightness(light), do: brightness(program(), light)
 
+
   # -------------------------------------------------------------------
   # Internal functions
   # -------------------------------------------------------------------
 
   # During the morning we want nice and bright lights
-  def brightness(:morning, _), do: 254
+  def brightness(:morning, _), do: range_up(50, 254, minutes(10), seconds_since(~T[06:00:00]))
   # During the day we want nice and bright lights
   def brightness(:day, _), do: 254
   # During the evening we want to slowly dim the secondary lights
-  def brightness(:evening, _) do
-    range_down(254, 100, hours(3), seconds_since(~T[18:00:00]))
-  end
-  def brightness(:night, _) do
-    range_down(100, 50, minutes(30), seconds_since(~T[23:00:00]))
-  end
+  def brightness(:evening, _), do: range_down(254, 100, hours(3), seconds_since(~T[18:00:00]))
+  def brightness(:night, _), do: range_down(100, 50, minutes(30), seconds_since(~T[23:00:00]))
 
   defp program() do
     current_hour = Timex.local.hour

@@ -41,7 +41,7 @@ defmodule House.Hue do
     Logger.info("Init hue")
     send(self(), :read_hue)
     :timer.send_interval(:timer.seconds(1), :read_hue)
-    :timer.send_interval(200, :update_lights)
+    :timer.send_interval(100, :update_lights)
     state = %{
       username: System.get_env("HUE_USERNAME"),
       endpoint: "",
@@ -143,13 +143,17 @@ defmodule House.Hue do
   end
 
   defp set_light({light, action}, state) do
-    Logger.info("Light: #{light}, action: #{inspect action}")
-    url = "http://#{state.endpoint}/api/#{state.username}/lights/#{light}/state"
-    case HTTPoison.put(url, Poison.encode!(action)) do
-      {:ok, _} -> :ok
-      {:error, reason} ->
-        Logger.info("Failed setting light #{light} (action: #{inspect action}): #{inspect reason}")
-    end
+    Task.start(fn() ->
+      start_time = Timex.now()
+      url = "http://#{state.endpoint}/api/#{state.username}/lights/#{light}/state"
+      case HTTPoison.put(url, Poison.encode!(action)) do
+        {:ok, _} -> :ok
+        {:error, reason} ->
+          Logger.info("Failed setting light #{light} (action: #{inspect action}): #{inspect reason}")
+      end
+      duration = Timex.diff(Timex.now(), start_time, :milliseconds) / 1000
+      Logger.info("Light: #{light}, action: #{inspect action} (took #{duration} seconds)")
+    end)
   end
 
   defp sensors_from_state(%{last_reading: last_reading}), do:
@@ -171,8 +175,11 @@ defmodule House.Hue do
   end
 
   defp read_hue(state) do
+    start_time = Timex.now()
     url = "http://#{state.endpoint}/api/#{state.username}/"
     response = Poison.decode!(HTTPoison.get!(url).body)
+    duration = Timex.diff(Timex.now(), start_time, :milliseconds) / 1000
+    Logger.info("Read Hue state (took #{duration} seconds)")
     %{state | last_reading: response}
   end
 

@@ -102,12 +102,19 @@ export class PageRoot extends React.Component {
 
   render() {
     return (
-      <div>
-        <Rooms room={this.state.room} otherRooms={this.state.potentialRooms} />
-        <Panel title="Mode">
-          <ModeButton className="col-12-md" onClick={this.updateMode} activeState={this.state.mode} activeValue="manual" title="Manual" />
-          <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
-        </Panel>
+      <div className="container">
+        <div className="row">
+          <div className="col-xs-12 col-md-4">
+            <Rooms room={this.state.room} otherRooms={this.state.potentialRooms} />
+          </div>
+          <div className="col-xs-12 col-md-4">
+            <Panel title="Mode">
+              <ModeButton className="col-12-md" onClick={this.updateMode} activeState={this.state.mode} activeValue="manual" title="Manual" />
+              {' '}
+              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
+            </Panel>
+          </div>
+        </div>
       </div>
     );
   }

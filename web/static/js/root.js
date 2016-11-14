@@ -1,34 +1,20 @@
 import React from "react";
 import {Socket} from "phoenix"
 
-class Row extends React.Component {
+class Panel extends React.Component {
   render() {
     return (
-      <div className="row">
-        {this.props.children}
+      <div className="panel panel-default">
+        <div className="panel-heading">
+          <h1 className="panel-title">
+            {this.props.title}
+          </h1>
+        </div>
+        <div className="panel-body">
+          {this.props.children}
+        </div>
       </div>
     );
-  }
-}
-
-class PotentialRooms extends React.Component {
-  render() {
-    if (this.props.rooms.length > 0) {
-      return (
-        <Row>
-          <div className="col-lg-12">
-            <p>Other possibilities</p>
-            <ul>
-              {this.props.rooms.map((room, i) => {
-                return <li key={i}>{room}</li>
-              })}
-            </ul>
-          </div>
-        </Row>
-      );
-    } else {
-      return null;
-    }
   }
 }
 
@@ -40,18 +26,37 @@ class ModeButton extends React.Component {
     } else {
       classNames = classNames + "btn-default";
     }
-    return <input onClick={() => this.props.onClick(this.props.activeValue)} className={classNames} type="submit" value={this.props.title} />;
+    return (
+      <button onClick={() => this.props.onClick(this.props.activeValue)} className={classNames} type="submit">
+        {this.props.title}
+      </button>
+    );
   }
 }
 
-class Room extends React.Component {
+class Rooms extends React.Component {
   render() {
-    return (
-      <Row>
-        <div className="col-lg-12">
-          <h1>{this.props.name}</h1>
+    let otherRooms = null;
+    if (this.props.otherRooms.length > 0) {
+      otherRooms = (
+        <div>
+          <p>Other possibilities</p>
+          <ul>
+            {this.props.rooms.map((room, i) => {
+              return <li key={i}>{room}</li>
+            })}
+          </ul>
         </div>
-      </Row>
+      );
+    }
+    return (
+      <Panel title="Room">
+        <p>
+          You are currently in the <strong>{this.props.room}</strong>
+        </p>
+
+        {otherRooms}
+      </Panel>
     );
   }
 }
@@ -98,10 +103,11 @@ export class PageRoot extends React.Component {
   render() {
     return (
       <div>
-        <Room name={this.state.room} />
-        <PotentialRooms rooms={this.state.potentialRooms} />
-        <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="manual" title="Manual" />
-        <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
+        <Rooms room={this.state.room} otherRooms={this.state.potentialRooms} />
+        <Panel title="Mode">
+          <ModeButton className="col-12-md" onClick={this.updateMode} activeState={this.state.mode} activeValue="manual" title="Manual" />
+          <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
+        </Panel>
       </div>
     );
   }

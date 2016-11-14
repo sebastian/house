@@ -42,7 +42,7 @@ class Rooms extends React.Component {
         <div>
           <p>Other possibilities</p>
           <ul>
-            {this.props.rooms.map((room, i) => {
+            {this.props.otherRooms.map((room, i) => {
               return <li key={i}>{room}</li>
             })}
           </ul>

@@ -18,7 +18,7 @@ defmodule House.UpdatesChannel do
       name: room_name,
       potential_rooms: other_rooms
     }
-    House.Endpoint.broadcast("room:presence", "new_room", message)
+    House.Endpoint.broadcast("updates:all", "new_room", message)
   end
 
 
@@ -27,7 +27,7 @@ defmodule House.UpdatesChannel do
   # -------------------------------------------------------------------
 
   @doc false
-  def join("room:presence", _, socket) do
+  def join("updates:" <> _, _, socket) do
     {:ok, %{}, socket}
   end
 
@@ -38,6 +38,12 @@ defmodule House.UpdatesChannel do
   end
 
   @doc false
+  def handle_in("set_mode", mode, socket) do
+    set_mode(mode)
+    House.Endpoint.broadcast("updates:all", "new_mode", %{mode: mode})
+    {:noreply, socket}
+  end
+
   def handle_in(event, _payload, socket) do
     Logger.warn("unknown event #{event}")
     {:noreply, socket}
@@ -48,4 +54,13 @@ defmodule House.UpdatesChannel do
     Logger.info("unhandled info #{inspect(message)}")
     {:noreply, socket}
   end
+
+
+  # -------------------------------------------------------------------
+  # Internal functions
+  # -------------------------------------------------------------------
+
+  defp set_mode("manual"), do: House.Mode.manual()
+  defp set_mode("auto"), do: House.Mode.auto()
+  defp set_mode(other), do: Logger.warn("Uknown mode: #{inspect other}")
 end

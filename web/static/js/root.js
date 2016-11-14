@@ -32,6 +32,18 @@ class PotentialRooms extends React.Component {
   }
 }
 
+class ModeButton extends React.Component {
+  render() {
+    let classNames = "btn btn-lg ";
+    if (this.props.activeState === this.props.activeValue) {
+      classNames = classNames + "btn-success";
+    } else {
+      classNames = classNames + "btn-default";
+    }
+    return <input onClick={() => this.props.onClick(this.props.activeValue)} className={classNames} type="submit" value={this.props.title} />;
+  }
+}
+
 class Room extends React.Component {
   render() {
     return (
@@ -51,21 +63,36 @@ export class PageRoot extends React.Component {
     this.state = {
       room: props.room,
       potentialRooms: props.potentialRooms,
+      mode: props.mode,
     };
 
     const socket = new Socket("/socket", {});
     socket.connect();
-    let channel = socket.channel("room:presence", {})
+    let channel = socket.channel("updates:all", {})
     channel.join()
       .receive("ok", resp => { console.log("Joined successfully", resp) })
       .receive("error", resp => { console.log("Unable to join", resp) })
 
-    this.updateRoom = this.updateRoom.bind(this);
-    channel.on("new_room", this.updateRoom);
+    this.serverSentRoomUpdate = this.serverSentRoomUpdate.bind(this);
+    this.serverSentModeUpdate = this.serverSentModeUpdate.bind(this);
+    this.updateMode = this.updateMode.bind(this);
+    channel.on("new_room", this.serverSentRoomUpdate);
+    channel.on("new_mode", this.serverSentModeUpdate);
+
+    this.channel = channel;
   }
 
-  updateRoom(event) {
+  serverSentRoomUpdate(event) {
     this.setState({room: event.name, potentialRooms: event.potential_rooms});
+  }
+
+  serverSentModeUpdate(event) {
+    this.setState({mode: event.mode});
+  }
+
+  updateMode(mode) {
+    this.setState({mode});
+    this.channel.push("set_mode", mode);
   }
 
   render() {
@@ -73,6 +100,8 @@ export class PageRoot extends React.Component {
       <div>
         <Room name={this.state.room} />
         <PotentialRooms rooms={this.state.potentialRooms} />
+        <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="manual" title="Manual" />
+        <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
       </div>
     );
   }

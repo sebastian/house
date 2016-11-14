@@ -5,7 +5,8 @@
     onLoad: function(callback) {
       callback({
         room: <%= {:safe, inspect hd(@rooms)} %>,
-        potentialRooms: <%= {:safe, inspect tl(@rooms)} %>
+        potentialRooms: <%= {:safe, inspect tl(@rooms)} %>,
+        mode: <%= {:safe, inspect to_string(House.Mode.get())} %>
       });
     }
   };

@@ -126,17 +126,17 @@ export class PageRoot extends React.Component {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-xs-12 col-md-4">
+          <div className="col-xs-12 col-sm-6 col-md-4">
             <Rooms room={this.state.room} otherRooms={this.state.potentialRooms} />
           </div>
-          <div className="col-xs-12 col-md-4">
+          <div className="col-xs-12 col-sm-6 col-md-4">
             <Panel title="Mode">
               <ModeButton className="col-12-md" onClick={this.updateMode} activeState={this.state.mode} activeValue="manual" title="Manual" />
               {' '}
               <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
             </Panel>
           </div>
-          <div className="col-xs-12 col-md-4">
+          <div className="col-xs-12 col-sm-12 col-md-4">
             <NakedPanel title="State">
               <table className="table">
                 <thead>

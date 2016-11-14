@@ -8,5 +8,9 @@ import _ from "lodash";
 
 import {PageRoot} from "./root";
 
-const element = document.getElementById("page-frame");
-ReactDOM.render(<PageRoot />, element);
+if (window.pageConfig !== undefined) {
+  window.pageConfig.onLoad.call(this, (params) => {
+    const element = document.getElementById("page-frame");
+    ReactDOM.render(<PageRoot {...params} />, element);
+  });
+}

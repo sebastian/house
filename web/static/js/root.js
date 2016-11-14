@@ -49,8 +49,8 @@ export class PageRoot extends React.Component {
     super(props);
 
     this.state = {
-      room: "Unknown room",
-      potentialRooms: [],
+      room: props.room,
+      potentialRooms: props.potentialRooms,
     };
 
     const socket = new Socket("/socket", {});

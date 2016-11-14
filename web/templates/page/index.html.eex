@@ -1,1 +1,12 @@
 <div id="page-frame" />
+
+<script>
+  window.pageConfig = {
+    onLoad: function(callback) {
+      callback({
+        room: <%= {:safe, inspect hd(@rooms)} %>,
+        potentialRooms: <%= {:safe, inspect tl(@rooms)} %>
+      });
+    }
+  };
+</script>

@@ -39,6 +39,7 @@ defmodule House.Hue do
       temperature: &1.sensor.temperature / 100,
       lux: round(&1.sensor.lux),
     }))
+    |> Enum.sort_by(&(&1.name))
 
 
   # -------------------------------------------------------------------

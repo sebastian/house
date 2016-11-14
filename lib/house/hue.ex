@@ -32,6 +32,14 @@ defmodule House.Hue do
   def rooms(), do:
     GenServer.call(__MODULE__, :rooms)
 
+  def formatted_room_sensors(sensor_data \\ rooms()), do:
+    sensor_data
+    |> Enum.map(&(%{
+      name: &1.name,
+      temperature: &1.sensor.temperature / 100,
+      lux: round(&1.sensor.lux),
+    }))
+
 
   # -------------------------------------------------------------------
   # Callbacks
@@ -185,7 +193,13 @@ defmodule House.Hue do
     url = "http://#{state.endpoint}/api/#{state.username}/"
     response = Poison.decode!(HTTPoison.get!(url).body)
     duration = Timex.diff(Timex.now(), start_time, :milliseconds) / 1000
-    # Logger.info("Read Hue state (took #{duration} seconds)")
+    Logger.debug("Read Hue state (took #{duration} seconds)")
+    # In case there has been a change, we upadte the web clients
+    if state.last_reading != response do
+      Task.start(fn() ->
+        House.UpdatesChannel.sensor_data_update(formatted_room_sensors())
+      end)
+    end
     %{state | last_reading: response}
   end
 

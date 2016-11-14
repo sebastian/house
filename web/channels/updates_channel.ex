@@ -21,6 +21,16 @@ defmodule House.UpdatesChannel do
     House.Endpoint.broadcast("updates:all", "new_room", message)
   end
 
+  @doc "Broadcast the state of rooms"
+  @spec sensor_data_update(Map.t) :: :ok
+  def sensor_data_update(sensor_data) do
+    Logger.info("Broadcasting sensor data")
+    message = %{
+      room_sensors: sensor_data,
+    }
+    House.Endpoint.broadcast("updates:all", "sensor_data_update", message)
+  end
+
 
   # -------------------------------------------------------------------
   # Phoenix.Channel callback functions

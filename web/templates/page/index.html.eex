@@ -6,9 +6,10 @@
   window.pageConfig = {
     onLoad: function(callback) {
       callback({
-        room: <%= {:safe, inspect hd(@rooms)} %>,
-        potentialRooms: <%= {:safe, inspect tl(@rooms)} %>,
-        mode: <%= {:safe, inspect to_string(House.Mode.get())} %>
+        room: <%= {:safe, inspect hd(@room_names)} %>,
+        potentialRooms: <%= {:safe, inspect tl(@room_names)} %>,
+        mode: <%= {:safe, inspect to_string(House.Mode.get())} %>,
+        roomSensors: <%= {:safe, @room_data} %>
       });
     }
   };

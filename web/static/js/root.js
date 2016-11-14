@@ -1,6 +1,21 @@
 import React from "react";
 import {Socket} from "phoenix"
 
+class NakedPanel extends React.Component {
+  render() {
+    return (
+      <div className="panel panel-default">
+        <div className="panel-heading">
+          <h1 className="panel-title">
+            {this.props.title}
+          </h1>
+        </div>
+        {this.props.children}
+      </div>
+    );
+  }
+}
+
 class Panel extends React.Component {
   render() {
     return (
@@ -69,6 +84,7 @@ export class PageRoot extends React.Component {
       room: props.room,
       potentialRooms: props.potentialRooms,
       mode: props.mode,
+      roomSensors: props.roomSensors,
     };
 
     const socket = new Socket("/socket", {});
@@ -80,9 +96,11 @@ export class PageRoot extends React.Component {
 
     this.serverSentRoomUpdate = this.serverSentRoomUpdate.bind(this);
     this.serverSentModeUpdate = this.serverSentModeUpdate.bind(this);
+    this.serverSentRoomSensorUpdate = this.serverSentRoomSensorUpdate.bind(this);
     this.updateMode = this.updateMode.bind(this);
     channel.on("new_room", this.serverSentRoomUpdate);
     channel.on("new_mode", this.serverSentModeUpdate);
+    channel.on("sensor_data_update", this.serverSentRoomSensorUpdate);
 
     this.channel = channel;
   }
@@ -93,6 +111,10 @@ export class PageRoot extends React.Component {
 
   serverSentModeUpdate(event) {
     this.setState({mode: event.mode});
+  }
+
+  serverSentRoomSensorUpdate(event) {
+    this.setState({roomSensors: event.room_sensors});
   }
 
   updateMode(mode) {
@@ -113,6 +135,30 @@ export class PageRoot extends React.Component {
               {' '}
               <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
             </Panel>
+          </div>
+          <div className="col-xs-12 col-md-4">
+            <NakedPanel title="State">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Lux</th>
+                    <th>Temperature</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.roomSensors.map((data, i) => {
+                    return (
+                      <tr key={i}>
+                        <td>{data.name}</td>
+                        <td>{data.lux}</td>
+                        <td>{data.temperature} &#8451;</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </NakedPanel>
           </div>
         </div>
       </div>

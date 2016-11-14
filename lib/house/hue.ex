@@ -40,8 +40,6 @@ defmodule House.Hue do
   def init(_) do
     Logger.info("Init hue")
     send(self(), :read_hue)
-    :timer.send_interval(:timer.seconds(1), :read_hue)
-    :timer.send_interval(100, :update_lights)
     state = %{
       username: System.get_env("HUE_USERNAME"),
       endpoint: "",
@@ -102,11 +100,14 @@ defmodule House.Hue do
     |> sensors_from_state()
     |> Presence.update()
     House.Lights.check_sensors()
+    :timer.send_after(:timer.seconds(1), :read_hue)
     {:noreply, read_hue(state)}
   end
 
   def handle_info(:update_lights, state) do
-    {:noreply, run_light_schedules(state)}
+    state = run_light_schedules(state)
+    :timer.send_after(100, :update_lights)
+    {:noreply, state}
   end
 
 

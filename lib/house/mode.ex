@@ -33,7 +33,7 @@ defmodule House.Mode do
     {:ok, :auto}
   end
 
-  def handle_cast({:set, mode}, state) do
+  def handle_cast({:set, mode}, _state) do
     {:noreply, mode}
   end
 

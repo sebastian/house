@@ -10,8 +10,7 @@ config :house, House.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "EhO8CGVCh7krJHPLGfo0Zrn5MgixfCogFydiima2HL3DreDLAbY7dUdAFHyoIoiw",
   render_errors: [view: House.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: House.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: House.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,

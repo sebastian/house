@@ -13,7 +13,7 @@ defmodule House.UpdatesChannel do
   @doc "Broadcast the most likely next room"
   @spec room_change(String.t, String.t) :: :ok
   def room_change(room_name, other_rooms) do
-    Logger.info("Broadcasting new room: #{room_name}")
+    Logger.debug("Broadcasting new room: #{room_name}")
     message = %{
       name: room_name,
       potential_rooms: other_rooms
@@ -24,7 +24,7 @@ defmodule House.UpdatesChannel do
   @doc "Broadcast the state of rooms"
   @spec sensor_data_update(Map.t) :: :ok
   def sensor_data_update(sensor_data) do
-    Logger.info("Broadcasting sensor data")
+    Logger.debug("Broadcasting sensor data")
     message = %{
       room_sensors: sensor_data,
     }

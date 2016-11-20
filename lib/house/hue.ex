@@ -161,13 +161,13 @@ defmodule House.Hue do
         case HTTPoison.put(url, Poison.encode!(action)) do
           {:ok, _} -> :ok
           {:error, reason} ->
-            Logger.info("Failed setting light #{light} (action: #{inspect action}): #{inspect reason}")
+            Logger.debug("Failed setting light #{light} (action: #{inspect action}): #{inspect reason}")
         end
         duration = Timex.diff(Timex.now(), start_time, :milliseconds) / 1000
-        Logger.info("Light: #{light}, action: #{inspect action} (took #{duration} seconds)")
+        Logger.debug("Light: #{light}, action: #{inspect action} (took #{duration} seconds)")
       end)
     else
-      Logger.info("Ignoring light event (mode: #{House.Mode.get()})")
+      Logger.debug("Ignoring light event (mode: #{House.Mode.get()})")
     end
   end
 

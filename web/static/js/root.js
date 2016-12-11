@@ -127,9 +127,6 @@ export class PageRoot extends React.Component {
       <div className="container">
         <div className="row">
           <div className="col-xs-12 col-sm-6 col-md-4">
-            <Rooms room={this.state.room} otherRooms={this.state.potentialRooms} />
-          </div>
-          <div className="col-xs-12 col-sm-6 col-md-4">
             <Panel title="Mode">
               <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
               {' '}
@@ -139,6 +136,9 @@ export class PageRoot extends React.Component {
               {' '}
               <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="presence_only" title="Presence only" />
             </Panel>
+          </div>
+          <div className="col-xs-12 col-sm-6 col-md-4">
+            <Rooms room={this.state.room} otherRooms={this.state.potentialRooms} />
           </div>
           <div className="col-xs-12 col-sm-12 col-md-4">
             <NakedPanel title="State">

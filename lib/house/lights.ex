@@ -119,7 +119,9 @@ defmodule House.Lights do
       action = if House.Mode.presence_only?() do
         action
       else
-        Map.put(action, "bri", Scene.brightness(light))
+        action
+        |> Map.put("bri", Scene.brightness(light))
+        |> Map.put("ct", Scene.temperature(light))
       end
       House.Hue.set_primary_light(light, action)
     end)
@@ -133,6 +135,7 @@ defmodule House.Lights do
       else
         action
         |> Map.put("bri", brightness(room, Scene.brightness(light)))
+        |> Map.put("ct", Scene.temperature(light))
         |> Map.put("transitiontime", 8)
       end
       House.Hue.set_secondary_light(light, action)

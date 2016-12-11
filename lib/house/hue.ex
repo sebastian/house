@@ -132,9 +132,13 @@ defmodule House.Hue do
   # -------------------------------------------------------------------
 
   defp schedule_next_hue_check() do
-    timeout = if House.Mode.auto?(), do: :timer.seconds(1), else: :timer.seconds(10)
+    timeout = if slow_mode?(), do: :timer.seconds(10), else: :timer.seconds(1)
     :timer.send_after(timeout, :read_hue)
   end
+
+  defp slow_mode?(), do:
+    House.Mode.manual?() or House.Mode.away?()
+
 
   defp run_light_schedules(%{scheduled_primary_lights: [light | lights]} = state) do
     set_light(light, state)

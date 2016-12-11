@@ -14,26 +14,18 @@ defmodule House.Mode do
   def check_sensors(), do:
     GenServer.cast(__MODULE__, :check_sensors)
 
-  def auto(), do:
-    GenServer.cast(__MODULE__, {:set, :auto})
-
-  def manual(), do:
-    GenServer.cast(__MODULE__, {:set, :manual})
-
-  def away(), do:
-    GenServer.cast(__MODULE__, {:set, :away})
-
   def get(), do:
     GenServer.call(__MODULE__, :get)
 
-  def manual?(), do:
-    get() == :manual
+  Enum.each(~w(auto manual away presence_only), fn(mode) ->
+    def unquote(:"#{mode}")() do
+      GenServer.cast(__MODULE__, {:set, unquote(:"#{mode}")})
+    end
 
-  def auto?(), do:
-    get() == :auto
-
-  def away?(), do:
-    get() == :away
+    def unquote(:"#{mode}?")() do
+      get() == unquote(:"#{mode}")
+    end
+  end)
 
 
   # -------------------------------------------------------------------

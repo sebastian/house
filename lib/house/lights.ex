@@ -115,22 +115,26 @@ defmodule House.Lights do
 
   defp adjust_primary_lights(room) do
     Enum.each(room.lights, fn(light) ->
-      action = %{
-        "on" => Scene.on(light),
-        "bri" => Scene.brightness(light),
-      }
+      action = %{"on" => Scene.on(light)}
+      action = if House.Mode.presence_only?() do
+        action
+      else
+        Map.put(action, "bri", Scene.brightness(light))
+      end
       House.Hue.set_primary_light(light, action)
     end)
   end
 
   defp adjust_secondary_lights(room) do
     Enum.each(room.lights, fn(light) ->
-      max_brightness = Scene.brightness(light)
-      action = %{
-        "on" => Scene.on(light),
-        "bri" => brightness(room, max_brightness),
-        "transitiontime" => 8,
-      }
+      action = %{"on" => Scene.on(light)}
+      action = if House.Mode.presence_only?() do
+        action
+      else
+        action
+        |> Map.put("bri", brightness(room, Scene.brightness(light)))
+        |> Map.put("transitiontime", 8)
+      end
       House.Hue.set_secondary_light(light, action)
     end)
   end

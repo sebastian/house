@@ -51733,11 +51733,6 @@ var PageRoot = exports.PageRoot = function (_React$Component5) {
           _react2.default.createElement(
             "div",
             { className: "col-xs-12 col-sm-6 col-md-4" },
-            _react2.default.createElement(Rooms, { room: this.state.room, otherRooms: this.state.potentialRooms })
-          ),
-          _react2.default.createElement(
-            "div",
-            { className: "col-xs-12 col-sm-6 col-md-4" },
             _react2.default.createElement(
               Panel,
               { title: "Mode" },
@@ -51749,6 +51744,11 @@ var PageRoot = exports.PageRoot = function (_React$Component5) {
               ' ',
               _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "presence_only", title: "Presence only" })
             )
+          ),
+          _react2.default.createElement(
+            "div",
+            { className: "col-xs-12 col-sm-6 col-md-4" },
+            _react2.default.createElement(Rooms, { room: this.state.room, otherRooms: this.state.potentialRooms })
           ),
           _react2.default.createElement(
             "div",
@@ -51844,8 +51844,8 @@ exports.default = socket;
 });
 
 ;require.alias("jquery/dist/jquery.js", "jquery");
-require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
 require.alias("react/react.js", "react");
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
 require.alias("phoenix/priv/static/phoenix.js", "phoenix");
 require.alias("lodash/lodash.js", "lodash");
 require.alias("process/browser.js", "process");

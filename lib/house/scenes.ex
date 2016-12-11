@@ -75,7 +75,6 @@ defmodule House.Scene do
   def brightness(:night, lamp) when lamp in @bedroom, do: 0
   def brightness(:night, _), do: range_down(150, 30, minutes(30), seconds_since(~T[23:00:00]))
 
-
   # During the morning we want nice and bright lights
   def temperature(:morning, _), do: range_down(450, 153, minutes(10), seconds_since(~T[06:00:00]))
   # During the day we want nice and cool lights, but they should slowly become warmer

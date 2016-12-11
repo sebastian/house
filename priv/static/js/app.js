@@ -51845,9 +51845,9 @@ exports.default = socket;
 
 ;require.alias("jquery/dist/jquery.js", "jquery");
 require.alias("react/react.js", "react");
-require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
 require.alias("phoenix/priv/static/phoenix.js", "phoenix");
 require.alias("lodash/lodash.js", "lodash");
+require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
 require.alias("process/browser.js", "process");
 require.alias("buffer/index.js", "buffer");process = require('process');require.register("___globals___", function(exports, require, module) {
   

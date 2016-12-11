@@ -110,7 +110,7 @@ defmodule House.Hue do
     |> sensors_from_state()
     |> Presence.update()
     House.Lights.check_sensors()
-    :timer.send_after(:timer.seconds(1), :read_hue)
+    schedule_next_hue_check()
     {:noreply, read_hue(state)}
   end
 
@@ -124,6 +124,11 @@ defmodule House.Hue do
   # -------------------------------------------------------------------
   # Internal functions
   # -------------------------------------------------------------------
+
+  defp schedule_next_hue_check() do
+    timeout = if House.Mode.auto?(), do: :timer.seconds(1), else: :timer.seconds(10)
+    :timer.send_after(timeout, :read_hue)
+  end
 
   defp run_light_schedules(%{scheduled_primary_lights: [light | lights]} = state) do
     set_light(light, state)

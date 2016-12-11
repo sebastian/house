@@ -51741,9 +51741,13 @@ var PageRoot = exports.PageRoot = function (_React$Component5) {
             _react2.default.createElement(
               Panel,
               { title: "Mode" },
+              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "auto", title: "Auto" }),
+              ' ',
               _react2.default.createElement(ModeButton, { className: "col-12-md", onClick: this.updateMode, activeState: this.state.mode, activeValue: "manual", title: "Manual" }),
               ' ',
-              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "auto", title: "Auto" })
+              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "away", title: "Away" }),
+              ' ',
+              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "presence_only", title: "Presence only" })
             )
           ),
           _react2.default.createElement(

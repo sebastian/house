@@ -56,7 +56,7 @@ defmodule House.Hue do
     send(self(), :read_hue)
     :timer.send_after(100, :update_lights)
     state = %{
-      username: System.get_env("HUE_USERNAME"),
+      username: hue_username(),
       endpoint: "",
       last_reading: %{},
 
@@ -248,4 +248,8 @@ defmodule House.Hue do
         end)
     end
   end
+
+  defp hue_username(), do:
+    Application.get_env(:house, House.Endpoint)
+    |> Keyword.get(:hue_username)
 end

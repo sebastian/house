@@ -1,13 +1,13 @@
 .PHONY: start
 
 start:
-	bash -c "source .env && iex -S mix phoenix.server"
+	iex -S mix phoenix.server
 
 start_prod:
-	bash -c "source .env && rel/house/bin/house console"
+	rel/house/bin/house start
 
-restart:
-	bash -c "source .env && rel/house/bin/house restart"
+restart_prod:
+	rel/house/bin/house restart
 
 release:
 	MIX_ENV=prod mix phoenix.digest

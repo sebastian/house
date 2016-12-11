@@ -72,5 +72,6 @@ defmodule House.UpdatesChannel do
 
   defp set_mode("manual"), do: House.Mode.manual()
   defp set_mode("auto"), do: House.Mode.auto()
+  defp set_mode("away"), do: House.Mode.away()
   defp set_mode(other), do: Logger.warn("Uknown mode: #{inspect other}")
 end

@@ -131,9 +131,11 @@ export class PageRoot extends React.Component {
           </div>
           <div className="col-xs-12 col-sm-6 col-md-4">
             <Panel title="Mode">
+              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
+              {' '}
               <ModeButton className="col-12-md" onClick={this.updateMode} activeState={this.state.mode} activeValue="manual" title="Manual" />
               {' '}
-              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
+              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="away" title="Away" />
             </Panel>
           </div>
           <div className="col-xs-12 col-sm-12 col-md-4">

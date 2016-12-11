@@ -23,9 +23,13 @@ defmodule House.Scene do
   # -------------------------------------------------------------------
 
   def on(light) do
-    case brightness(light) do
-      0 -> false
-      _ -> true
+    if House.Mode.away?() do
+      false
+    else
+      case brightness(light) do
+        0 -> false
+        _ -> true
+      end
     end
   end
 

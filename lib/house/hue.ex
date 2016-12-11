@@ -32,6 +32,11 @@ defmodule House.Hue do
   def rooms(), do:
     GenServer.call(__MODULE__, :rooms)
 
+  def geosensors(sensor_data \\ last_reading()), do:
+    sensor_data["sensors"]
+    |> Enum.map(fn({_, data}) -> data end)
+    |> Enum.filter(&(&1["modelid"] =~ ~r/geo/i))
+
   def formatted_room_sensors(sensor_data \\ rooms()), do:
     sensor_data
     |> Enum.map(&(%{
@@ -106,12 +111,13 @@ defmodule House.Hue do
 
   def handle_info(:read_hue, state) do
     state = read_hue(state)
+    schedule_next_hue_check()
     state
     |> sensors_from_state()
     |> Presence.update()
     House.Lights.check_sensors()
-    schedule_next_hue_check()
-    {:noreply, read_hue(state)}
+    House.Mode.check_sensors()
+    {:noreply, state}
   end
 
   def handle_info(:update_lights, state) do
@@ -159,7 +165,9 @@ defmodule House.Hue do
   end
 
   defp set_light({light, action}, state) do
-    if House.Mode.auto?() do
+    if House.Mode.manual?() do
+      Logger.debug("Ignoring light event (mode: #{House.Mode.get()})")
+    else
       Task.start(fn() ->
         start_time = Timex.now()
         url = "http://#{state.endpoint}/api/#{state.username}/lights/#{light}/state"
@@ -171,8 +179,6 @@ defmodule House.Hue do
         duration = Timex.diff(Timex.now(), start_time, :milliseconds) / 1000
         Logger.debug("Light: #{light}, action: #{inspect action} (took #{duration} seconds)")
       end)
-    else
-      Logger.debug("Ignoring light event (mode: #{House.Mode.get()})")
     end
   end
 

@@ -31,6 +31,13 @@ defmodule House.UpdatesChannel do
     House.Endpoint.broadcast("updates:all", "sensor_data_update", message)
   end
 
+  @doc "Broadcasts a mode change"
+  @spec mode_update(:atom) :: :ok
+  def mode_update(mode) do
+    Logger.info("Broadcasting mode")
+    House.Endpoint.broadcast("updates:all", "new_mode", %{mode: mode})
+  end
+
 
   # -------------------------------------------------------------------
   # Phoenix.Channel callback functions

@@ -32,10 +32,9 @@ defmodule House.Hue do
   def rooms(), do:
     GenServer.call(__MODULE__, :rooms)
 
-  def geosensors(sensor_data \\ last_reading()), do:
-    sensor_data["sensors"]
-    |> Enum.map(fn({_, data}) -> data end)
-    |> Enum.filter(&(&1["modelid"] =~ ~r/geo/i))
+  def home?(), do: sensor_presence(~r/HOMEAWAY/i)
+
+  def geohome?(), do: sensor_presence(~r/geo/i)
 
   def formatted_room_sensors(sensor_data \\ rooms()), do:
     sensor_data
@@ -252,4 +251,10 @@ defmodule House.Hue do
   defp hue_username(), do:
     Application.get_env(:house, House.Endpoint)
     |> Keyword.get(:hue_username)
+
+  defp sensor_presence(match), do:
+    last_reading()["sensors"]
+    |> Enum.map(fn({_, data}) -> data end)
+    |> Enum.filter(&(&1["modelid"] =~ match))
+    |> Enum.any?(&(&1["state"]["presence"]))
 end

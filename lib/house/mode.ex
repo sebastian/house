@@ -3,6 +3,8 @@ defmodule House.Mode do
 
   require Logger
 
+  alias House.Hue
+
 
   # -------------------------------------------------------------------
   # API
@@ -42,6 +44,7 @@ defmodule House.Mode do
   end
 
   def handle_cast({:set, mode}, state) do
+    Logger.info("Setting state: #{inspect mode}")
     state = %{state |
       mode: mode,
       lastset_change: current_timestamp(),
@@ -49,10 +52,11 @@ defmodule House.Mode do
     {:noreply, state}
   end
   def handle_cast(:check_sensors, %{mode: :away} = state) do
-    House.Hue.geosensors()
-    |> Enum.any?(&(&1["state"]["presence"]))
-    |> if do
-      if more_than_an_hour_since_set_to_away?(state) do
+    if Hue.home? and Hue.geohome? do
+      Logger.info("We are at home and geofence also has triggered")
+      if more_than_half_an_hour_since_set_to_away?(state) do
+        Logger.info("Was set to away more than 30 minutes ago. Going back to auto")
+        House.UpdatesChannel.mode_update("auto")
         {:noreply, %{state | mode: :auto}}
       else
         Logger.info("System is set to away mode, but sensors claim we are here. Ignore for now, since it was recently set to away")
@@ -62,8 +66,23 @@ defmodule House.Mode do
       {:noreply, state}
     end
   end
-  def handle_cast(:check_sensors, state), do:
-    {:noreply, state}
+  def handle_cast(:check_sensors, state) do
+    # The homeaway toggle trumps everything else.
+    # It can force us to away.
+    if not Hue.home? do
+      Logger.info("Hue set to AWAY mode")
+      state = %{state |
+        mode: :away,
+        # We fake the timestamp to be in the past, so we can quickly
+        # get out of the away mode again :)
+        lastset_change: current_timestamp() - 2 * 60 * 60
+      }
+      House.UpdatesChannel.mode_update("away")
+      {:noreply, state}
+    else
+      {:noreply, state}
+    end
+  end
 
   def handle_call(:get, _from, state) do
     {:reply, state.mode, state}
@@ -77,6 +96,6 @@ defmodule House.Mode do
   defp current_timestamp(), do:
     :os.system_time(:seconds)
 
-  defp more_than_an_hour_since_set_to_away?(state), do:
-    current_timestamp() - state.lastset_change > 3600
+  defp more_than_half_an_hour_since_set_to_away?(state), do:
+    current_timestamp() - state.lastset_change > 1800
 end

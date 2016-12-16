@@ -1,6 +1,8 @@
 defmodule House.PageController do
   use House.Web, :controller
 
+  require Logger
+
 
   # -------------------------------------------------------------------
   # Callbacks
@@ -13,6 +15,7 @@ defmodule House.PageController do
   end
 
   def off(conn, _params) do
+    Logger.info("OFF-page was triggered")
     House.Mode.away()
     conn
     |> put_layout(false)

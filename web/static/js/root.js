@@ -128,15 +128,15 @@ export class PageRoot extends React.Component {
         <div className="row">
           <div className="col-xs-12 col-sm-6 col-md-4">
             <Panel title="Mode">
-              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="Auto" />
+              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="auto" title="🚗" />
               {' '}
-              <ModeButton className="col-12-md" onClick={this.updateMode} activeState={this.state.mode} activeValue="manual" title="Manual" />
+              <ModeButton className="col-12-md" onClick={this.updateMode} activeState={this.state.mode} activeValue="manual" title="📖" />
               {' '}
-              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="away" title="Away" />
+              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="away" title="🐾" />
               {' '}
-              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="presence_only" title="Presence only" />
+              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="presence_only" title="🙌" />
               {' '}
-              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="night" title="Night" />
+              <ModeButton onClick={this.updateMode} activeState={this.state.mode} activeValue="night" title="💤" />
             </Panel>
           </div>
           <div className="col-xs-12 col-sm-6 col-md-4">

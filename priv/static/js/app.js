@@ -51736,13 +51736,15 @@ var PageRoot = exports.PageRoot = function (_React$Component5) {
             _react2.default.createElement(
               Panel,
               { title: "Mode" },
-              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "auto", title: "Auto" }),
+              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "auto", title: "\uD83D\uDE97" }),
               ' ',
-              _react2.default.createElement(ModeButton, { className: "col-12-md", onClick: this.updateMode, activeState: this.state.mode, activeValue: "manual", title: "Manual" }),
+              _react2.default.createElement(ModeButton, { className: "col-12-md", onClick: this.updateMode, activeState: this.state.mode, activeValue: "manual", title: "\uD83D\uDCD6" }),
               ' ',
-              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "away", title: "Away" }),
+              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "away", title: "\uD83D\uDC3E" }),
               ' ',
-              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "presence_only", title: "Presence only" })
+              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "presence_only", title: "\uD83D\uDE4C" }),
+              ' ',
+              _react2.default.createElement(ModeButton, { onClick: this.updateMode, activeState: this.state.mode, activeValue: "night", title: "\uD83D\uDCA4" })
             )
           ),
           _react2.default.createElement(
@@ -51845,9 +51847,9 @@ exports.default = socket;
 
 ;require.alias("jquery/dist/jquery.js", "jquery");
 require.alias("react/react.js", "react");
-require.alias("phoenix/priv/static/phoenix.js", "phoenix");
-require.alias("lodash/lodash.js", "lodash");
 require.alias("phoenix_html/priv/static/phoenix_html.js", "phoenix_html");
+require.alias("lodash/lodash.js", "lodash");
+require.alias("phoenix/priv/static/phoenix.js", "phoenix");
 require.alias("process/browser.js", "process");
 require.alias("buffer/index.js", "buffer");process = require('process');require.register("___globals___", function(exports, require, module) {
   

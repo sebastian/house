@@ -19,7 +19,7 @@ defmodule House.Mode do
   def get(), do:
     GenServer.call(__MODULE__, :get)
 
-  Enum.each(~w(auto manual away presence_only), fn(mode) ->
+  Enum.each(~w(auto night manual away presence_only), fn(mode) ->
     def unquote(:"#{mode}")() do
       GenServer.cast(__MODULE__, {:set, unquote(:"#{mode}")})
     end
@@ -49,6 +49,10 @@ defmodule House.Mode do
       mode: mode,
       lastset_change: current_timestamp(),
     }
+    if mode == :night do
+      # Wake up after 8 hours and 10 minutes (graceperiod :))
+      Process.send_after(self(), :wake_up, :timer.hours(8) + :timer.minutes(10))
+    end
     {:noreply, state}
   end
   def handle_cast(:check_sensors, %{mode: :away} = state) do
@@ -88,6 +92,15 @@ defmodule House.Mode do
     {:reply, state.mode, state}
   end
 
+  def handle_info(:wake_up, state) do
+    Logger.info("Good morning! Back to auto mode")
+    state = %{state |
+      mode: :auto,
+      lastset_change: current_timestamp(),
+    }
+    House.UpdatesChannel.mode_update("auto")
+    {:noreply, state}
+  end
 
   # -------------------------------------------------------------------
   # Internal functions

@@ -115,13 +115,13 @@ defmodule House.Lights do
 
   defp adjust_primary_lights(room) do
     Enum.each(room.lights, fn(light) ->
-      action = %{"on" => Scene.on(light)}
+      action = %{"on" => Scene.on(%{lamp: light, primary?: true})}
       action = if House.Mode.presence_only?() do
         action
       else
         action
-        |> Map.put("bri", Scene.brightness(light))
-        |> Map.put("ct", Scene.temperature(light))
+        |> Map.put("bri", Scene.brightness(%{lamp: light, primary?: true}))
+        |> Map.put("ct", Scene.temperature(%{lamp: light, primary?: true}))
       end
       House.Hue.set_primary_light(light, action)
     end)
@@ -129,13 +129,13 @@ defmodule House.Lights do
 
   defp adjust_secondary_lights(room) do
     Enum.each(room.lights, fn(light) ->
-      action = %{"on" => Scene.on(light)}
+      action = %{"on" => Scene.on(%{lamp: light, primary?: false})}
       action = if House.Mode.presence_only?() do
         action
       else
         action
-        |> Map.put("bri", brightness(room, Scene.brightness(light)))
-        |> Map.put("ct", Scene.temperature(light))
+        |> Map.put("bri", brightness(room, Scene.brightness(%{lamp: light, primary?: false})))
+        |> Map.put("ct", Scene.temperature(%{lamp: light, primary?: false}))
         |> Map.put("transitiontime", 8)
       end
       House.Hue.set_secondary_light(light, action)

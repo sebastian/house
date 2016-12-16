@@ -76,13 +76,17 @@ defmodule House.Scene do
   def brightness(:night, _), do: range_down(150, 30, minutes(30), seconds_since(~T[23:00:00]))
 
   # During the morning we want nice and bright lights
-  def temperature(:morning, _), do: range_down(450, 153, minutes(10), seconds_since(~T[06:00:00]))
+  def temperature(:morning, lamp) when lamp in @kitchen, do: range_down(450, 153, minutes(10), seconds_since(~T[06:00:00]))
+  def temperature(:morning, _), do: range_down(450, 250, minutes(10), seconds_since(~T[06:00:00]))
   # During the day we want nice and cool lights, but they should slowly become warmer
-  def temperature(:day, _), do: 153
-  def temperature(:afternoon, _), do: range_up(153, 250, hours(2), seconds_since(~T[16:00:00]))
+  def temperature(:day, lamp) when lamp in @kitchen, do: 153
+  def temperature(:day, _), do: 250
+  def temperature(:afternoon, lamp) when lamp in @kitchen, do: range_up(153, 300, hours(3), seconds_since(~T[13:00:00]))
+  def temperature(:afternoon, _), do: range_up(250, 450, hours(3), seconds_since(~T[13:00:00]))
   # During the evening we want the lights to get warm and cozy!
-  def temperature(:evening, _), do: range_up(250, 450, minutes(5), seconds_since(~T[18:00:00]))
-  def temperature(:night, _), do: 500
+  def temperature(:evening, lamp) when lamp in @kitchen, do: range_up(300, 450, hours(1), seconds_since(~T[18:00:00]))
+  def temperature(:evening, _), do: 450
+  def temperature(:night, _), do: 450
 
   defp program() do
     current_hour = Timex.local.hour

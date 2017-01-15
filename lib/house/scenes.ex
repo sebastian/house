@@ -61,22 +61,20 @@ defmodule House.Scene do
   def brightness(:morning, %{lamp: lamp}) when lamp in @living_room, do: 0
   def brightness(:morning, _), do: range_up(50, 254, minutes(10), seconds_since(~T[06:00:00]))
   # During the day we want nice and bright lights
-  def brightness(:day, %{lamp: lamp}) when lamp in @living_room, do: 0
   def brightness(:day, _), do: 254
   # During the afternoon we want the light to slowly get dimmer, preparing for post-work time
-  def brightness(:afternoon, %{lamp: lamp}) when lamp in @living_room, do: range_up(0, 200, hours(3), seconds_since(~T[15:00:00]))
   def brightness(:afternoon, _), do: range_down(254, 200, hours(3), seconds_since(~T[15:00:00]))
   # During the evening we want to slowly dim the secondary lights
-  def brightness(:evening, %{lamp: lamp}) when lamp in @kitchen_secondary, do: range_down(200, 80, minutes(30), seconds_since(~T[18:00:00]))
+  def brightness(:evening, %{lamp: lamp}) when lamp in @kitchen_secondary, do: range_down(200, 150, minutes(30), seconds_since(~T[18:00:00]))
   def brightness(:evening, %{lamp: lamp}) when lamp in @kitchen, do: 200
-  def brightness(:evening, %{lamp: lamp}) when lamp in @living_room_secondary, do: range_down(200, 30, minutes(30), seconds_since(~T[18:00:00]))
-  def brightness(:evening, %{lamp: lamp}) when lamp in @bedroom, do: range_down(200, 50, hours(1), seconds_since(~T[18:00:00]))
-  def brightness(:evening, _), do: range_down(200, 130, hours(3), seconds_since(~T[18:00:00]))
+  def brightness(:evening, %{lamp: lamp}) when lamp in @living_room_secondary, do: range_down(200, 150, minutes(30), seconds_since(~T[18:00:00]))
+  def brightness(:evening, %{lamp: lamp}) when lamp in @bedroom, do: range_down(200, 150, hours(1), seconds_since(~T[18:00:00]))
+  def brightness(:evening, _), do: range_down(200, 150, hours(3), seconds_since(~T[18:00:00]))
   def brightness(:night, %{primary?: false}), do: 0
   def brightness(:night, %{lamp: lamp}) when lamp in @bedroom, do: 0
-  def brightness(:night, %{lamp: lamp}) when lamp in @living_room_bottom_side_lamp, do: 20
+  def brightness(:night, %{lamp: lamp}) when lamp in @living_room_bottom_side_lamp, do: 50
   def brightness(:night, %{lamp: lamp}) when lamp in @living_room, do: 0
-  def brightness(:night, _), do: 20
+  def brightness(:night, _), do: 50
 
   # During the morning we want nice and bright lights
   def temperature(:morning, %{lamp: lamp}) when lamp in @kitchen, do: range_down(450, 153, minutes(10), seconds_since(~T[06:00:00]))

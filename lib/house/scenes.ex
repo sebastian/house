@@ -105,6 +105,7 @@ defmodule House.Scene do
     end
   end
 
+  defp range_down(from, _to, _time_to_max, elapsed_time) when elapsed_time < 0, do: from
   defp range_down(from, to, time_to_max, elapsed_time) do
     current_val = min(time_to_max, elapsed_time)
     range = from - to

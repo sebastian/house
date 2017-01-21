@@ -17,8 +17,11 @@ defmodule House.PageController do
   def off(conn, _params) do
     Logger.info("OFF-page was triggered")
     House.Mode.away()
+    redirect(conn, to: "/is_off")
+  end
+
+  def is_off(conn, _params), do:
     conn
     |> put_layout(false)
     |> render("off.html")
-  end
 end

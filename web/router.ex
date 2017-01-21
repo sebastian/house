@@ -18,5 +18,6 @@ defmodule House.Router do
 
     get "/", PageController, :index
     get "/trigger_away", PageController, :off
+    get "/is_off", PageController, :is_off
   end
 end

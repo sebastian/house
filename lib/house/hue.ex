@@ -63,14 +63,9 @@ defmodule House.Hue do
       scheduled_primary_lights: [],
       scheduled_secondary_lights: [],
     }
-    case find_endpoint() do
-      {:ok, endpoint} ->
-        Logger.info("Using '#{endpoint}' as the endpoint")
-        {:ok, %{state | endpoint: endpoint}}
-      :error ->
-        Logger.error("Can't find Hue base station")
-        :error
-    end
+    |> find_endpoint()
+    |> sync_read_hue()
+    {:ok, state}
   end
 
   def handle_cast({:schedule_primary_light, new_light, action}, state) do
@@ -108,14 +103,25 @@ defmodule House.Hue do
     {:reply, rooms_from_state(state, sensors), state}
   end
 
-  def handle_info(:read_hue, state) do
-    state = read_hue(state)
+  def handle_info({:new_hue_reading, reading}, state) do
     schedule_next_hue_check()
+    # In case there has been a change, we upadte the web clients
+    if state.last_reading != reading do
+      Task.start(fn() ->
+        House.UpdatesChannel.sensor_data_update(formatted_room_sensors())
+      end)
+    end
+    state = %{state | last_reading: reading}
     state
     |> sensors_from_state()
     |> Presence.update()
     House.Lights.check_sensors()
     House.Mode.check_sensors()
+    {:noreply, state}
+  end
+
+  def handle_info(:read_hue, state) do
+    read_hue(state)
     {:noreply, state}
   end
 
@@ -194,27 +200,20 @@ defmodule House.Hue do
     last_reading["groups"]
     |> Rooms.from_data(sensors)
 
-  defp find_endpoint() do
-    case HTTPoison.get("https://www.meethue.com/api/nupnp") do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        [station | _] = Poison.decode!(body)
-        {:ok, station["internalipaddress"]}
-      _ -> :error
-    end
+  defp read_hue(state) do
+    pid = self()
+    Task.start(fn() ->
+      %{last_reading: last_reading} = sync_read_hue(state)
+      send(pid, {:new_hue_reading, last_reading})
+    end)
   end
 
-  defp read_hue(state) do
+  defp sync_read_hue(state) do
     start_time = Timex.now()
     url = "http://#{state.endpoint}/api/#{state.username}/"
     response = Poison.decode!(HTTPoison.get!(url).body)
     duration = Timex.diff(Timex.now(), start_time, :milliseconds) / 1000
     Logger.debug("Read Hue state (took #{duration} seconds)")
-    # In case there has been a change, we upadte the web clients
-    if state.last_reading != response do
-      Task.start(fn() ->
-        House.UpdatesChannel.sensor_data_update(formatted_room_sensors())
-      end)
-    end
     %{state | last_reading: response}
   end
 
@@ -257,4 +256,16 @@ defmodule House.Hue do
     |> Enum.map(fn({_, data}) -> data end)
     |> Enum.filter(&(&1["modelid"] =~ match))
     |> Enum.any?(&(&1["state"]["presence"]))
+
+  defp find_endpoint(state) do
+    case HTTPoison.get("https://www.meethue.com/api/nupnp") do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        [station | _] = Poison.decode!(body)
+        endpoint = station["internalipaddress"]
+        Logger.info("Using '#{endpoint}' as the endpoint")
+        %{state | endpoint: endpoint}
+      reason ->
+        raise "Could not discover the hue endpoint (#{inspect reason})"
+    end
+  end
 end

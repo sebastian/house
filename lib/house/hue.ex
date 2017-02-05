@@ -23,21 +23,15 @@ defmodule House.Hue do
   def last_reading(), do:
     GenServer.call(__MODULE__, :last_reading)
 
-  def lights(), do:
-    GenServer.call(__MODULE__, :lights)
+  def rooms(hue_reading), do: rooms_from_state(hue_reading, sensors_from_reading(hue_reading))
 
-  def sensors(), do:
-    GenServer.call(__MODULE__, :sensors)
+  def home?(reading), do: sensor_presence(reading, ~r/HOMEAWAY/i)
 
-  def rooms(), do:
-    GenServer.call(__MODULE__, :rooms)
+  def geohome?(reading), do: sensor_presence(reading, ~r/geo/i)
 
-  def home?(), do: sensor_presence(~r/HOMEAWAY/i)
-
-  def geohome?(), do: sensor_presence(~r/geo/i)
-
-  def formatted_room_sensors(sensor_data \\ rooms()), do:
-    sensor_data
+  def formatted_room_sensors(hue_reading), do:
+    hue_reading
+    |> rooms()
     |> Enum.map(&(%{
       name: &1.name,
       temperature: &1.sensor.temperature / 100,
@@ -95,28 +89,11 @@ defmodule House.Hue do
   end
 
   def handle_call(:sensors, _from, state) do
-    {:reply, sensors_from_state(state), state}
-  end
-
-  def handle_call(:rooms, _from, state) do
-    sensors = sensors_from_state(state)
-    {:reply, rooms_from_state(state, sensors), state}
+    {:reply, sensors_from_reading(state.last_reading), state}
   end
 
   def handle_info({:new_hue_reading, reading}, state) do
-    # In case there has been a change, we upadte the web clients
-    if state.last_reading != reading do
-      Task.start(fn() ->
-        House.UpdatesChannel.sensor_data_update(formatted_room_sensors())
-      end)
-    end
-    state = %{state | last_reading: reading}
-    state
-    |> sensors_from_state()
-    |> Presence.update()
-    House.Lights.check_sensors()
-    House.Mode.check_sensors()
-    {:noreply, state}
+    {:noreply, %{state | last_reading: reading}}
   end
 
   def handle_info(:read_hue, state) do
@@ -191,20 +168,36 @@ defmodule House.Hue do
     end
   end
 
-  defp sensors_from_state(%{last_reading: last_reading}), do:
-    last_reading["sensors"]
+  defp sensors_from_reading(hue_state), do:
+    hue_state["sensors"]
     |> Enum.map(fn({_, sensor}) -> sensor end)
     |> Sensors.from_data()
 
-  defp rooms_from_state(%{last_reading: last_reading}, sensors), do:
-    last_reading["groups"]
+  defp rooms_from_state(hue_state, sensors), do:
+    hue_state["groups"]
     |> Rooms.from_data(sensors)
 
   defp read_hue(state) do
     pid = self()
     Task.start(fn() ->
-      %{last_reading: last_reading} = sync_read_hue(state)
-      send(pid, {:new_hue_reading, last_reading})
+      %{last_reading: reading} = sync_read_hue(state)
+      send(pid, {:new_hue_reading, reading})
+
+      if state.last_reading != reading do
+        reading
+        |> formatted_room_sensors()
+        |> House.UpdatesChannel.sensor_data_update()
+
+        reading
+        |> sensors_from_reading()
+        |> Presence.update()
+
+        reading
+        |> House.Mode.account_for_reading()
+
+        reading
+        |> House.Lights.account_for_reading()
+      end
     end)
   end
 
@@ -251,8 +244,8 @@ defmodule House.Hue do
     Application.get_env(:house, House.Endpoint)
     |> Keyword.get(:hue_username)
 
-  defp sensor_presence(match), do:
-    last_reading()["sensors"]
+  defp sensor_presence(reading, match), do:
+    reading["sensors"]
     |> Enum.map(fn({_, data}) -> data end)
     |> Enum.filter(&(&1["modelid"] =~ match))
     |> Enum.any?(&(&1["state"]["presence"]))

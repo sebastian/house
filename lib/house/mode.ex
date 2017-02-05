@@ -13,8 +13,8 @@ defmodule House.Mode do
   def start_link(), do:
     GenServer.start_link(__MODULE__, [], [name: __MODULE__])
 
-  def check_sensors(), do:
-    GenServer.cast(__MODULE__, :check_sensors)
+  def account_for_reading(reading), do:
+    GenServer.cast(__MODULE__, {:account_for_reading, reading})
 
   def get(), do:
     GenServer.call(__MODULE__, :get)
@@ -55,8 +55,8 @@ defmodule House.Mode do
     end
     {:noreply, state}
   end
-  def handle_cast(:check_sensors, %{mode: :away} = state) do
-    if Hue.home? and Hue.geohome? do
+  def handle_cast({:account_for_reading, reading}, %{mode: :away} = state) do
+    if Hue.home?(reading) and Hue.geohome?(reading) do
       Logger.info("We are at home and geofence also has triggered")
       if more_than_half_an_hour_since_set_to_away?(state) do
         Logger.info("Was set to away more than 30 minutes ago. Going back to auto")
@@ -70,10 +70,10 @@ defmodule House.Mode do
       {:noreply, state}
     end
   end
-  def handle_cast(:check_sensors, state) do
+  def handle_cast({:account_for_reading, reading}, state) do
     # The homeaway toggle trumps everything else.
     # It can force us to away.
-    if not Hue.home? do
+    if not Hue.home?(reading) do
       Logger.info("Hue set to AWAY mode")
       state = %{state |
         mode: :away,

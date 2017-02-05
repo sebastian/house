@@ -26,8 +26,8 @@ defmodule House.Lights do
   def start_link(), do:
     GenServer.start_link(__MODULE__, [], [name: __MODULE__])
 
-  def check_sensors(), do:
-    GenServer.cast(__MODULE__, :check_sensors)
+  def account_for_reading(reading), do:
+    GenServer.cast(__MODULE__, {:account_for_reading, reading})
 
 
   # -------------------------------------------------------------------
@@ -42,9 +42,10 @@ defmodule House.Lights do
     }}
   end
 
-  def handle_cast(:check_sensors, %{secondary_rooms: secondary_rooms} = state) do
-    rooms_by_name = Hue.rooms()
-      |> by_name()
+  def handle_cast({:account_for_reading, reading}, %{secondary_rooms: secondary_rooms} = state) do
+    rooms_by_name = reading
+    |> Hue.rooms()
+    |> by_name()
 
     primary_rooms = Presence.active_rooms()
       |> Enum.map(&Map.get(rooms_by_name, &1.name, nil))

@@ -41,8 +41,9 @@ defmodule House.Presence do
     new_state = update_with_readings(state, sensor_readings)
     unless new_state.active_rooms == state.active_rooms do
       room_name = hd(new_state.active_rooms).name
-      other_rooms = tl(new_state.active_rooms)
-        |> Enum.map(& &1.name)
+      other_rooms = new_state.active_rooms
+      |> tl()
+      |> Enum.map(& &1.name)
       House.UpdatesChannel.room_change(room_name, other_rooms)
     end
     {:noreply, new_state}
@@ -55,9 +56,9 @@ defmodule House.Presence do
 
   defp update_with_readings(%{active_rooms: rooms} = state, readings) do
     active_rooms = readings
-      |> Enum.filter(& &1.presence)
-      |> Enum.map(&Map.take(&1, [:name, :last_updated]))
-      |> Enum.sort_by(& &1.last_updated, &>=/2)
+    |> Enum.filter(& &1.presence)
+    |> Enum.map(&Map.take(&1, [:name, :last_updated]))
+    |> Enum.sort_by(& &1.last_updated, &>=/2)
     case active_rooms do
       [] -> %{state | active_rooms: [hd(rooms)]}
       _rooms -> %{state | active_rooms: active_rooms}

@@ -104,7 +104,6 @@ defmodule House.Hue do
   end
 
   def handle_info({:new_hue_reading, reading}, state) do
-    schedule_next_hue_check()
     # In case there has been a change, we upadte the web clients
     if state.last_reading != reading do
       Task.start(fn() ->
@@ -122,6 +121,7 @@ defmodule House.Hue do
 
   def handle_info(:read_hue, state) do
     read_hue(state)
+    schedule_next_hue_check()
     {:noreply, state}
   end
 

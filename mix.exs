@@ -21,7 +21,7 @@ defmodule House.Mixfile do
       mod: {House, []},
       applications: [
         :phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger,
-        :gettext, :httpoison, :timex,
+        :gettext, :httpoison, :timex, :upnp, :exml
       ]
     ]
   end

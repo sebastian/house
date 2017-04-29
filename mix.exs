@@ -43,7 +43,7 @@ defmodule House.Mixfile do
      {:gettext, "~> 0.11"},
      {:exrm, "~> 1.0"},
      {:cowboy, "~> 1.0"},
-     {:upnp, git: "git@github.com:wmealing/upnp.git"},
+     {:upnp, git: "https://github.com/wmealing/upnp.git"},
      {:exml, "~> 0.1.1"}
    ]
   end

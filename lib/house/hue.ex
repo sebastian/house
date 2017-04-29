@@ -156,7 +156,7 @@ defmodule House.Hue do
     else
       Task.start(fn() ->
         start_time = Timex.now()
-        url = "http://#{state.endpoint}/api/#{state.username}/lights/#{light}/state"
+        url = "#{state.endpoint}/api/#{state.username}/lights/#{light}/state"
         case HTTPoison.put(url, Poison.encode!(action)) do
           {:ok, _} -> :ok
           {:error, reason} ->
@@ -203,7 +203,7 @@ defmodule House.Hue do
 
   defp sync_read_hue(state) do
     start_time = Timex.now()
-    url = "http://#{state.endpoint}/api/#{state.username}/"
+    url = "#{state.endpoint}/api/#{state.username}/"
     response = Poison.decode!(HTTPoison.get!(url).body)
     duration = Timex.diff(Timex.now(), start_time, :milliseconds) / 1000
     Logger.debug("Read Hue state (took #{duration} seconds)")
@@ -251,14 +251,51 @@ defmodule House.Hue do
     |> Enum.any?(&(&1["state"]["presence"]))
 
   defp find_endpoint(state) do
-    case HTTPoison.get("https://www.meethue.com/api/nupnp") do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        [station | _] = Poison.decode!(body)
-        endpoint = station["internalipaddress"]
+    case discover_with_nupnp() do
+      {:ok, endpoint} ->
         Logger.info("Using '#{endpoint}' as the endpoint")
         %{state | endpoint: endpoint}
+      {:error, reason} ->
+        IO.puts "Could not discover the hue endpoint with NUPNP (#{inspect reason})"
+        case discover_with_upnp() do
+          {:ok, endpoint} ->
+            Logger.info("Using '#{endpoint}' as the endpoint")
+            %{state | endpoint: endpoint}
+          {:error, reason} ->
+            raise "Could not discover the hue endpoint (#{inspect reason})"
+        end
+    end
+  end
+
+  defp discover_with_nupnp() do
+    case HTTPoison.get("https://www.meethue.com/api/nupnp") do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        case Poison.decode!(body) do
+          [] -> {:error, "NUPNP returned an empty list of endpoints"}
+          [station | _] ->
+            {:ok, "http://#{station["internalipaddress"]}"}
+        end
       reason ->
-        raise "Could not discover the hue endpoint (#{inspect reason})"
+        {:error, reason}
+    end
+  end
+
+  defp discover_with_upnp() do
+    discovery_entry = :upnp.discover()
+    |> Enum.filter(fn(values) ->
+      case :proplists.get_value('SERVER', values) do
+        :undefined -> false
+        val -> to_string(val) =~ ~r/IpBridge/
+      end
+    end)
+    |> hd()
+    location = :proplists.get_value('LOCATION', discovery_entry)
+    case HTTPoison.get(location) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        parsed_xml = Exml.parse(body)
+        {:ok, to_string(Exml.get(parsed_xml, "//root/URLBase"))}
+      reason ->
+        {:error, reason}
     end
   end
 end

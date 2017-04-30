@@ -98,8 +98,8 @@ defmodule House.Scene do
         current_hour >= 6 and current_hour < 9 -> :morning
         current_hour >= 9 and current_hour < 13 -> :day
         current_hour >= 13 and current_hour < 18 -> :afternoon
-        current_hour >= 18 and current_hour < 23 -> :evening
-        current_hour >= 23 and current_hour <= 24 -> :night
+        current_hour >= 18 and current_hour < 22 -> :evening
+        current_hour >= 22 and current_hour <= 24 -> :night
         current_hour >= 0 and current_hour <= 6 -> :night
       end
     end

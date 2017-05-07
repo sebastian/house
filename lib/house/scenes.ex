@@ -71,10 +71,10 @@ defmodule House.Scene do
   def brightness(:evening, %{lamp: lamp}) when lamp in @bedroom, do: range_down(200, 150, hours(1), seconds_since(~T[18:00:00]))
   def brightness(:evening, _), do: range_down(200, 150, hours(3), seconds_since(~T[18:00:00]))
   def brightness(:night, %{primary?: false}), do: 0
-  def brightness(:night, %{lamp: lamp}) when lamp in @bedroom, do: 0
-  def brightness(:night, %{lamp: lamp}) when lamp in @living_room_bottom_side_lamp, do: 50
+  def brightness(:night, %{lamp: lamp}) when lamp in @bedroom, do: range_down(150, 0, minutes(1), seconds_since(~T[22:00:00]))
+  def brightness(:night, %{lamp: lamp}) when lamp in @living_room_bottom_side_lamp, do: range_down(150, 50, minutes(5), seconds_since(~T[22:00:00]))
   def brightness(:night, %{lamp: lamp}) when lamp in @living_room, do: 0
-  def brightness(:night, _), do: 50
+  def brightness(:night, _), do: range_down(150, 50, minutes(5), seconds_since(~T[22:00:00]))
 
   # During the morning we want nice and bright lights
   def temperature(:morning, %{lamp: lamp}) when lamp in @kitchen, do: range_down(450, 153, minutes(10), seconds_since(~T[06:00:00]))

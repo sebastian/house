@@ -28,8 +28,8 @@ defmodule House.Scene do
 
   require Logger
 
-  @kitchen ~w(6 10 11)
-  @kitchen_secondary ~w(10 11)
+  @kitchen ~w(6 10 11 15 16 17)
+  @kitchen_secondary ~w(10 11 15 16 17)
   @living_room ~w(1 7 8 9)
   @living_room_secondary ~w(7 8 9)
   @living_room_primary ~w(1)

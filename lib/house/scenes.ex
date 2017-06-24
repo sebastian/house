@@ -18,6 +18,12 @@ defmodule House.Scene do
   9: Living room side lamp mid
   10: By the coffee maker
   11: Kitchen by the oven
+  12: Mirror mid
+  13: Mirror left
+  14: Mirror bathtub
+  15: Kitchen spot right
+  16: Kitcehn spot middle
+  17: Kitchen spot left
   """
 
   require Logger

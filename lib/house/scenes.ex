@@ -131,10 +131,16 @@ defmodule House.Scene do
   defp minutes(n), do: n * 60
   defp hours(n), do: minutes(n * 60)
 
-  # Returns the number of seconds that have elapsed since time1
+  # Returns the number of seconds that have elapsed since time
   defp seconds_since(time) do
     now = Timex.local
-    (now.hour - time.hour) * 3600 +
+    now_hour = if time.hour > now.hour do
+      # This is the case when time crosses midnight.
+      24 + now.hour
+    else
+      now.hour
+    end
+    (now_hour - time.hour) * 3600 +
     (now.minute - time.minute) * 60 +
     (now.second - time.second)
   end

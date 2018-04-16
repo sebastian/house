@@ -1,0 +1,4 @@
+:set -fwarn-unused-binds
+:set -isrc
+:set -fdiagnostics-color
+:load Main

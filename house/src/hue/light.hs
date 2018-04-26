@@ -3,22 +3,24 @@ module Hue.Light where
 import qualified Data.Text as T
 
 type Brightness = Int
-type Hue = Maybe Int
-type Saturation = Maybe Int
+type ColourTemp = Int
 
-data LightState = LightOff
-                | LightOn Brightness Hue Saturation
-                deriving Eq
+data LightState =
+    LightOff
+  | LightOn Brightness ColourTemp
+  deriving Eq
 
 instance Show LightState where
-  show LightOff = "off"
-  show (LightOn b h s) = mconcat ["on with brightness: ", show b, ", hue: ", show h, ", and saturation: ", show s]
+  show LightOff    = "off"
+  show (LightOn b ct) =
+    mconcat ["on with brightness: ", show b, ", and colour temperature: ", show ct]
 
 data Light = Light {
-    lightId :: T.Text,
-    state   :: LightState,
-    name    :: T.Text
+    getLightId :: T.Text,
+    getName    :: T.Text,
+    getState   :: LightState
   } deriving Eq
 
 instance Show Light where
-  show (Light i s n) = mconcat [T.unpack i, " (", T.unpack n, "): currently ", show s]
+  show (Light i n s) =
+    mconcat [T.unpack i, " (", T.unpack n, "): currently ", show s]

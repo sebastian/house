@@ -25,15 +25,10 @@ parseLight lightId = withObject "light" $ \o -> do
   stateO <- o .: "state"
   on <- stateO .: "on"
   lightState <- if on
-    then do
-      bri <- stateO .: "bri"
-      sat <- stateO .:? "sat" .!= Nothing
-      hue <- stateO .:? "hue" .!= Nothing
-      return (LightOn bri hue sat)
-    else
-      return LightOff
+    then LightOn <$> stateO .: "bri" <*> stateO .: "ct"
+    else return LightOff
   name <- o .: "name"
-  return (Light lightId lightState name)
+  return (Light lightId name lightState)
 
 parseLights :: Value -> Parser [Light]
 parseLights = withObject "lights" $ \o -> do

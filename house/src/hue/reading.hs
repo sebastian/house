@@ -16,8 +16,8 @@ import           Hue.Light
 import           Hue.MotionSensor
 
 data Reading = Reading {
-    lights        :: [Light],
-    motionSensors :: [MotionSensor]
+    getLights        :: [Light],
+    getMotionSensors :: [MotionSensor]
   } deriving (Eq, Show)
 
 parseLight :: Text -> Value -> Parser Light

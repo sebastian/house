@@ -21,9 +21,7 @@ main = do
       putStrLn $ "ERROR: too many/few arguments. Expected username, got: " ++ show args
 
 showReading r = do
-  let l = lights r
-      s = motionSensors r
   putStrLn "Lights:"
-  mapM_ print l
+  mapM_ print $ getLights r
   putStrLn "\nSensors:"
-  mapM_ print s
+  mapM_ print $ getMotionSensors r

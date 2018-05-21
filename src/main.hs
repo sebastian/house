@@ -151,7 +151,7 @@ briByTimeOfDay currentTime
               | otherwise = 50
 
 isAtNight :: TimeOfDay -> Bool
-isAtNight tod = (tis > timeInSec 10 00) && (tis < timeInSec 6 00)
+isAtNight tod = (tis > timeInSec 22 00) || (tis < timeInSec 6 00)
   where tis = timeOfDayAsSec tod
 
 scaleUp :: Integer -> Integer -> Integer -> Integer -> Integer -> Integer

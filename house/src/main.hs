@@ -2,15 +2,20 @@
 
 module Main where
 
-import           Control.Concurrent       (threadDelay)
-import           Control.Monad            (forever)
+import           Control.Concurrent          (forkIO, threadDelay)
+import           Control.Concurrent.MVar
+import           Control.Monad               (forever)
 import           Control.Monad.State.Lazy
-import qualified Data.HashMap.Strict      as SHM
-import qualified Data.Text                as T
+import qualified Data.HashMap.Strict         as SHM
+import qualified Data.Text                   as T
 import           Data.Time.Clock
 import           Data.Time.LocalTime
+import qualified Graphics.UI.Threepenny      as UI
+import           Graphics.UI.Threepenny.Core
+import qualified House.Gui                   as Gui
+import           House.Room
 import qualified Hue
-import           Hue.Endpoint             as E
+import           Hue.Endpoint                as E
 import           Hue.Group
 import           Hue.MotionSensor
 import           Hue.Reading
@@ -18,49 +23,65 @@ import           System.Environment
 import           System.Remote.Counter
 import           System.Remote.Monitoring
 
+data RuntimeConfig = RuntimeConfig {
+  getRoomsMVar        :: MVar Rooms,
+  getUser             :: T.Text,
+  getEndpoint         :: E.Endpoint,
+  getChangeCounter    :: Counter,
+  getReadStateCounter :: Counter
+}
+
 main :: IO ()
 main = do
-  ekg <- forkServer "localhost" 8000
-  readStateCounter <- getCounter "app.readHueState" ekg
-  changeCounter <- getCounter "app.updateLightState" ekg
   args <- getArgs
   case args of
-    [u] -> do
-      mep <- E.discover
-      case mep of
-        Nothing ->
-          print "Could not discover a Philips Hue endpoint"
-        Just [] ->
-          print "Could not find any base station to write to"
-        Just (ep:_) -> do
-          putStrLn $ "Starting Hue reader with endpoint" ++ show ep
-          stateUpdateLoop SHM.empty (T.pack u) ep readStateCounter changeCounter
-    _ ->
-      putStrLn $ "ERROR: too many/few arguments. Expected username, got: " ++ show args
+    [u] -> findHueBaseStation $ T.pack u
+    _ -> putStrLn $ "ERROR: too many/few arguments. Expected username, got: " ++ show args
 
-stateUpdateLoop roomsState u ep rsCounter cCounter = do
-  reading <- Hue.getReading u ep
-  _ <- inc rsCounter
-  latestRoomsState <- case reading of
-        Right r -> do
-          utcTime <- getCurrentTime
-          timeOfDay <- localTimeOfDay . zonedTimeToLocalTime <$> utcToLocalZonedTime utcTime
-          let roomsAsMap = allRoomsAsMap r
-              updatedRoomsState = calculateState utcTime timeOfDay r roomsState
-              desiredRoomLights = calculateLightForRoom timeOfDay utcTime roomsAsMap updatedRoomsState
-          adjustRoomLights u ep cCounter r roomsAsMap desiredRoomLights
+findHueBaseStation username = do
+  mep <- E.discover
+  case mep of
+    Nothing -> do
+      print "Could not discover a Philips Hue endpoint"
+      delayAndRetry username
+    Just [] -> do
+      print "Could not find any base station to write to"
+      delayAndRetry username
+    Just (ep:_) -> do
+      putStrLn $ "Starting Hue reader with endpoint" ++ show ep
+      ekg <- forkServer "localhost" 8000
+      roomsMVar <- newMVar SHM.empty
+      readStateCounter <- getCounter "app.readHueState" ekg
+      changeCounter <- getCounter "app.updateLightState" ekg
+      Gui.start roomsMVar
+      stateUpdateLoop $ RuntimeConfig roomsMVar username ep changeCounter readStateCounter
 
-          threadDelay 500000 -- 0.5 second
-          return updatedRoomsState
+delayAndRetry username = do
+  print "Will try again in 10 seconds"
+  threadDelay 10000000 -- 10 second
+  findHueBaseStation username
 
-        Left e -> do
-          putStrLn $ "Failed to get readings with error: " ++ e ++ ". Maybe the username is wrong?"
-          threadDelay 10000000 -- 10 second
-          return roomsState
+stateUpdateLoop config = do
+  reading <- Hue.getReading (getUser config) (getEndpoint config)
+  _ <- inc (getReadStateCounter config)
+  processReading reading config
+  stateUpdateLoop config
 
-  stateUpdateLoop latestRoomsState u ep rsCounter cCounter
+processReading (Right r) config = do
+  let roomsAsMap = allRoomsAsMap r
+      mvar = getRoomsMVar config
+  utcTime <- getCurrentTime
+  timeOfDay <- localTimeOfDay . zonedTimeToLocalTime <$> utcToLocalZonedTime utcTime
+  roomsState <- takeMVar mvar
+  let updatedRoomsState = calculateState utcTime timeOfDay r roomsState
+  putMVar mvar updatedRoomsState
+  adjustRoomLights config r roomsAsMap $
+    calculateLightForRoom timeOfDay utcTime roomsAsMap updatedRoomsState
+  threadDelay 500000 -- 0.5 second
+processReading (Left e) _config = do
+  putStrLn $ "Failed to get readings with error: " ++ e ++ ". Maybe the username is wrong?"
+  threadDelay 10000000 -- 10 second
 
-type RoomName = T.Text
 type MapGroupState = SHM.HashMap RoomName GroupState
 
 allRoomsAsMap :: Reading -> MapGroupState
@@ -70,15 +91,15 @@ allRoomsAsMap r = foldr setRoomState SHM.empty $ getGroups r
             "Room" -> SHM.insert (getGroupName g) (getGroupState g) m
             _      -> m
 
-adjustRoomLights :: T.Text -> Endpoint -> Counter -> Reading -> MapGroupState -> MapGroupState -> IO ()
-adjustRoomLights un ep cCounter r currentState desiredState =
-  mapM_ (adjustLight un ep cCounter r) $ SHM.toList $ changedLights currentState desiredState
+adjustRoomLights :: RuntimeConfig -> Reading -> MapGroupState -> MapGroupState -> IO ()
+adjustRoomLights config r currentState desiredState =
+  mapM_ (adjustLight config r) $ SHM.toList $ changedLights currentState desiredState
 
-adjustLight un ep cCounter reading (room, desiredState) =
+adjustLight config reading (room, desiredState) =
   case filter (\g -> getGroupName g == room) (getGroups reading) of
     [g] -> do
-      _ <- inc cCounter
-      Hue.setGroupState un ep (getGroupId g) desiredState
+      _ <- inc $ getChangeCounter config
+      Hue.setGroupState (getUser config) (getEndpoint config) (getGroupId g) desiredState
     _   -> print $ "Could not adjust the lights for room " ++ T.unpack room ++ ". Can't determine the ID"
 
 changedLights currentState =
@@ -159,12 +180,6 @@ secondsPerHour = secondsPerMinute * 60
 
 createInitialRoomState = SHM.map (const GroupOff)
 
-data RoomState =
-    Primary UTCTime
-  | Secondary UTCTime
-  deriving (Show)
-
-type Rooms = SHM.HashMap RoomName RoomState
 
 calculateState :: UTCTime -> TimeOfDay -> Reading -> Rooms -> Rooms
 calculateState now localTime reading rooms =
@@ -224,12 +239,3 @@ neighbouringRooms "Bathroom"    = ["Hallway"]
 neighbouringRooms "Living room" = ["Hallway", "Bedroom"]
 neighbouringRooms "Bedroom"     = ["Living room"]
 neighbouringRooms _             = []
-
-showReading r = do
-  putStrLn "Lights:"
-  mapM_ print $ getLights r
-  putStrLn "\nSensors:"
-  mapM_ print $ getMotionSensors r
-  putStrLn "\nGroups:"
-  mapM_ print $ getGroups r
-

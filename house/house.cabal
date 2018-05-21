@@ -20,6 +20,8 @@ executable house
                      , Hue.MotionSensor
                      , Hue.Group
                      , Hue.Reading
+                     , House.Gui
+                     , House.Room
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5
                      , aeson
@@ -31,5 +33,6 @@ executable house
                      , mtl
                      , scientific
                      , ekg
+                     , threepenny-gui
   ghc-options:        -with-rtsopts=-T
 

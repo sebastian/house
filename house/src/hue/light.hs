@@ -1,9 +1,15 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Hue.Light where
 
-import qualified Data.Text as T
+import           Control.Monad
+import           Data.Aeson
+import           Data.Aeson.Types
+import qualified Data.ByteString.Lazy.Char8 as LBS
+import qualified Data.Text                  as T
 
-type Brightness = Int
-type ColourTemp = Int
+type Brightness = Integer
+type ColourTemp = Integer
 
 data LightState =
     LightOff
@@ -24,3 +30,13 @@ data Light = Light {
 instance Show Light where
   show (Light i n s) =
     mconcat [T.unpack i, " (", T.unpack n, "): currently ", show s]
+
+parseLight :: T.Text -> Value -> Parser Light
+parseLight lightId = withObject "light" $ \o -> do
+  stateO <- o .: "state"
+  on <- stateO .: "on"
+  lightState <- if on
+    then LightOn <$> stateO .: "bri" <*> stateO .: "ct"
+    else return LightOff
+  name <- o .: "name"
+  return (Light lightId name lightState)

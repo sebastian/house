@@ -4,7 +4,6 @@ module Main where
 
 import           Control.Concurrent          (forkIO, threadDelay)
 import           Control.Concurrent.MVar
-import           Control.Monad               (forever)
 import           Control.Monad.State.Lazy
 import qualified Data.HashMap.Strict         as SHM
 import qualified Data.Text                   as T

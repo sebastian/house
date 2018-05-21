@@ -35,4 +35,3 @@ executable house
                      , ekg
                      , threepenny-gui
   ghc-options:        -with-rtsopts=-T
-

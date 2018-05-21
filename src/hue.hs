@@ -2,7 +2,8 @@
 
 module Hue (getReading, setGroupState) where
 
-import           Control.Exception          (throwIO)
+import           Control.Exception
+import           Control.Monad
 import           Control.Monad.IO.Class
 import           Data.Aeson                 (FromJSON, decode, encode)
 import           Data.Aeson.Types
@@ -23,12 +24,16 @@ data State = State {
     username :: Text
   } deriving (Show)
 
+
+---------------------------------------------------------------------
+-- Writing to Hue base station
+---------------------------------------------------------------------
+
 setGroupState :: Username -> Endpoint -> GroupId -> GroupState -> IO ()
 setGroupState un ep gid gs = do
   let url = setGroupStateUrl (State ep un) gid
       message = messageFor gs
-  _ <- req PUT url (ReqBodyJson message) ignoreResponse mempty
-  return ()
+  void (req PUT url (ReqBodyJson message) ignoreResponse mempty) `catch` handleWriteFailure
 
 messageFor GroupOff = Object $ SHM.fromList [("on", Bool False)]
 messageFor (GroupOn b ct) =
@@ -39,11 +44,25 @@ setGroupStateUrl state id = http ip /: "api" /: un /: "groups" /: id /: "action"
   where ip = internalipaddress $ endpoint state
         un = username state
 
+handleWriteFailure :: HttpException -> IO ()
+handleWriteFailure e = do
+  print $ "Failed at writing changes to Hue base station: " ++ show e
+  return ()
+
+
+---------------------------------------------------------------------
+-- Reading from Hue base station
+---------------------------------------------------------------------
+
 getReading :: Username -> Endpoint -> IO (Either String R.Reading)
 getReading un ep = do
   let url = readingUrl $ State ep un
-  R.parse . responseBody <$> req GET url NoReqBody lbsResponse mempty
+  (R.parse . responseBody <$> req GET url NoReqBody lbsResponse mempty) `catch` readException
 
 readingUrl state = http ip /: "api" /: un
   where ip = internalipaddress $ endpoint state
         un = username state
+
+readException :: HttpException -> IO (Either String R.Reading)
+readException ex =
+  return $ Left $ "Reading from Hue failed with exception: " ++ show ex

@@ -144,8 +144,10 @@ ctByTimeOfDay currentTime
 briByTimeOfDay currentTime
               | timeOfDayAsSec currentTime < timeInSec 6 00 = 0
               | timeOfDayAsSec currentTime < timeInSec 17 00 = 254
+              | timeOfDayAsSec currentTime < timeInSec 21 00 =
+                  scaleDown (hourInSec 17) (hourInSec 21) 254 200 (timeOfDayAsSec currentTime)
               | timeOfDayAsSec currentTime < timeInSec 22 00 =
-                  scaleDown (hourInSec 17) (hourInSec 21) 254 100 (timeOfDayAsSec currentTime)
+                  scaleDown (hourInSec 21) (hourInSec 22) 200 100 (timeOfDayAsSec currentTime)
               | otherwise = 50
 
 isAtNight :: TimeOfDay -> Bool

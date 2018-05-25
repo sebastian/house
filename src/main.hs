@@ -146,9 +146,11 @@ briByTimeOfDay currentTime
               | timeOfDayAsSec currentTime < timeInSec 17 00 = 254
               | timeOfDayAsSec currentTime < timeInSec 21 00 =
                   scaleDown (hourInSec 17) (hourInSec 21) 254 200 (timeOfDayAsSec currentTime)
+              | timeOfDayAsSec currentTime < timeInSec 21 58 =
+                  scaleDown (hourInSec 21) (timeInSec 21 58) 200 100 (timeOfDayAsSec currentTime)
               | timeOfDayAsSec currentTime < timeInSec 22 00 =
-                  scaleDown (hourInSec 21) (hourInSec 22) 200 100 (timeOfDayAsSec currentTime)
-              | otherwise = 50
+                  scaleDown (timeInSec 21 58) (hourInSec 22) 100 50 (timeOfDayAsSec currentTime)
+              | otherwise = 5
 
 isAtNight :: TimeOfDay -> Bool
 isAtNight tod = (tis > timeInSec 22 00) || (tis < timeInSec 6 00)
@@ -180,7 +182,6 @@ secondsPerMinute = 60
 secondsPerHour = secondsPerMinute * 60
 
 createInitialRoomState = SHM.map (const GroupOff)
-
 
 calculateState :: UTCTime -> TimeOfDay -> Reading -> Rooms -> Rooms
 calculateState now localTime reading rooms =
@@ -217,7 +218,7 @@ removeOldMainRoom currentTime localTime =
 
 maxRoomTime :: TimeOfDay -> Integer
 maxRoomTime localTime
-             | isAtNight localTime = secondsPerMinute
+             | isAtNight localTime = 2 * secondsPerMinute
              | otherwise = 20 * secondsPerMinute
 
 filterExpiredMain :: UTCTime -> TimeOfDay -> RoomState -> Bool

@@ -1,3 +1,4 @@
 .username
 .DS_Store
 .stack-work
+.docker-cache

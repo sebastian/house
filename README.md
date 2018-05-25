@@ -64,3 +64,10 @@ Then run:
 systemctl enable house
 systemctl start house
 ```
+
+## Utilities
+
+The system serves up two web interfaces:
+
+- monitoring endpoint at port `8000`
+- and a _super simple_ interface showing some more system state at port `8023`

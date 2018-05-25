@@ -48,7 +48,7 @@ findHueBaseStation username = do
       delayAndRetry username
     Just (ep:_) -> do
       putStrLn $ "Starting Hue reader with endpoint" ++ show ep
-      ekg <- forkServer "localhost" 8000
+      ekg <- forkServer "0.0.0.0" 8000
       roomsMVar <- newMVar SHM.empty
       readStateCounter <- getCounter "app.readHueState" ekg
       changeCounter <- getCounter "app.updateLightState" ekg

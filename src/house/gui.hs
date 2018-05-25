@@ -11,7 +11,7 @@ import           Graphics.UI.Threepenny.Core
 import           House.Room
 
 start :: MVar Rooms -> IO ThreadId
-start roomsMVar = forkIO (startGUI defaultConfig $ setupGui roomsMVar)
+start roomsMVar = forkIO (startGUI defaultConfig {jsAddr = Just "0.0.0.0"} $ setupGui roomsMVar)
 
 setupGui :: MVar Rooms -> Window -> UI ()
 setupGui mvar window = void $ do

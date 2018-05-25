@@ -36,6 +36,9 @@ but fast enough that I can live with it. To build the arm executable you:
 
 ## Running
 
+__NOTE: This system is NOT designed to be run on a server that is available
+from the internet!__
+
 You can configure systemd on your home server to run the house light control
 system as follows:
 
@@ -71,3 +74,5 @@ The system serves up two web interfaces:
 
 - monitoring endpoint at port `8000`
 - and a _super simple_ interface showing some more system state at port `8023`
+
+To build a new executable and upload it to a chip in it's default configuration, you can use `make update`.

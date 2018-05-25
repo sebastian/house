@@ -1,10 +1,38 @@
 # House
 
-A haskell application for controlling the lights in my house.
-Very much a work in progress (and in fact the first Haskell
-program I have ever written... expect some rough edges).
+## Description
 
-This version replaces a previous version written in Elixir.
+An application for automatically controlling the lighting
+in a flat that is kitted out with Philips Hue lightbulbs.
+
+It makes some simplifying assumptions:
+- there should be a [Hue motion sensor](https://www.usa.philips.com/c-p/046677464608/hue-motion-sensor) in every room
+- the motion sensor should have the same name as the room it is in
+
+Also, unless you like to get up at 6:00 and go to bed at 22:00 you should
+alter what is considered night in the `isAtNight` function in `src/main.hs`.
+In the same file also tweak what rooms are next to which ones in the
+`neighbouringRooms` functions.
+
+Once that is done you should be "good to go".
+
+## Building
+
+The application is written in Haskell. You should have [stack
+installed](https://docs.haskellstack.org/en/stable/README/) in order to build and run it.
+
+- `stack build` builds the application
+- `stack exec house <hue username>` runs the application locally
+
+I am running my application on a small [chip](https://getchip.com/pages/chip)
+which has an arm7 processor. Arm executables are generated in a docker image.
+The first build takes a brutally long time. Incremental builds aren't fast,
+but fast enough that I can live with it. To build the arm executable you:
+
+- need to have docker installed and running on your machine
+- create the build environment with `make build-container`
+- create the arm executable with `make arm-executable` (this is the only command you will need once you have run the
+  `make build-container` once.
 
 ## Running
 

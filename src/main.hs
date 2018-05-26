@@ -134,9 +134,9 @@ groupStateForBi bri localTimeOfDay = GroupOn bri (ctByTimeOfDay localTimeOfDay)
 -- 153 to 450 where higher is warmer
 ctByTimeOfDay currentTime
               | timeOfDayAsSec currentTime < timeInSec 6 00 = 450
-              | timeOfDayAsSec currentTime < timeInSec 12 00 = 153
+              | timeOfDayAsSec currentTime < timeInSec 12 00 = 200
               | timeOfDayAsSec currentTime < timeInSec 15 00 =
-                  scaleUp (hourInSec 12) (hourInSec 15) 153 350 (timeOfDayAsSec currentTime)
+                  scaleUp (hourInSec 12) (hourInSec 15) 200 350 (timeOfDayAsSec currentTime)
               | timeOfDayAsSec currentTime < timeInSec 19 00 =
                   scaleUp (hourInSec 15) (hourInSec 19) 350 450 (timeOfDayAsSec currentTime)
               | otherwise = 450

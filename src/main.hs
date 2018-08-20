@@ -56,8 +56,7 @@ findHueBaseStation username = do
       stateUpdateLoop $ RuntimeConfig roomsMVar username ep changeCounter readStateCounter
 
 delayAndRetry username = do
-  print "Will try again in 10 seconds"
-  threadDelay 10000000 -- 10 second
+  threadDelay 30000000 -- 30 second
   findHueBaseStation username
 
 stateUpdateLoop config = do

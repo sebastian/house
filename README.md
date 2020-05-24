@@ -10,29 +10,25 @@ It makes some simplifying assumptions:
 - the motion sensor should have the same name as the room it is in
 
 Also, unless you like to get up at 6:00 and go to bed at 22:00 you should
-alter what is considered night in the `isAtNight` function in `src/main.hs`.
-In the same file also tweak what rooms are next to which ones in the
-`neighbouringRooms` functions.
+dig into the system and change the settings.
 
-Once that is done you should be "good to go".
+### What it does
+
+It will turn on the lights in any room where it has seen movement, as well
+as the neighboring rooms, in case I am moving there.
 
 ## Building
 
-The application is written in Haskell. You should have [stack
-installed](https://docs.haskellstack.org/en/stable/README/) in order to build and run it.
+It's a fairly standard dotnet core application.
 
-- `stack build` builds the application
-- `stack exec house <hue username>` runs the application locally
+```
+dotnet restore
+dotnet run
+```
 
-I am running my application on a small [chip](https://getchip.com/pages/chip)
-which has an arm7 processor. Arm executables are generated in a docker image.
-The first build takes a brutally long time. Incremental builds aren't fast,
-but fast enough that I can live with it. To build the arm executable you:
+Should be all that is required.
 
-- need to have docker installed and running on your machine
-- create the build environment with `make build-container`
-- create the arm executable with `make arm-executable` (this is the only command you will need once you have run the
-  `make build-container` once.
+It expects that you have dotnet core version `3.1.200` or newer.
 
 ## Running
 
@@ -68,11 +64,14 @@ systemctl enable house
 systemctl start house
 ```
 
-## Utilities
+# History
 
-The system serves up two web interfaces:
+I believe this is the third incarnation of the system that I have built.
+I use it as a way to play with different languages.
 
-- monitoring endpoint at port `8000`
-- and a _super simple_ interface showing some more system state at port `8023`
+If you are interested, you can dig through the history to find a version
+written in Elixir, and one in Haskell too.
 
-To build a new executable and upload it to a chip in it's default configuration, you can use `make update`.
+The current F# one is a simplification of the previous versions. I was trying
+to be too smart (which made for some rather odd light schedules).
+The current F# implementation tries to do less.

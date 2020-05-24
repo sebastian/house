@@ -2,7 +2,7 @@
 
 module Main where
 
-import           Control.Concurrent          (forkIO, threadDelay)
+import           Control.Concurrent          (threadDelay)
 import           Control.Concurrent.MVar
 import           Control.Monad.State.Lazy
 import qualified Data.HashMap.Strict         as SHM

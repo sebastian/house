@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="samples\oldall.json" />
+        <Content Include="samples\groups.json" />
+        <Content Include="samples\lights.json" />
+        <Content Include="samples\sensors.json" />
+        <Content Include="samples\action-group.json" />
+        <Content Include="samples\all.json" />
+        <Compile Include="Types.fs" />
+        <Compile Include="API.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FSharp.Data" Version="3.3.3" />
+    </ItemGroup>
+
+</Project>

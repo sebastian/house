@@ -1,0 +1,862 @@
+[
+  {
+    "state": {
+      "on": true,
+      "bri": 254,
+      "hue": 15532,
+      "sat": 111,
+      "effect": "none",
+      "xy": [
+        0.4386,
+        0.4048
+      ],
+      "ct": 336,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:09:35"
+    },
+    "type": "Extended color light",
+    "name": "Sofa",
+    "modelid": "LCT007",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue color lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 2000,
+        "maxlumen": 800,
+        "colorgamuttype": "B",
+        "colorgamut": [
+          [
+            0.6750,
+            0.3220
+          ],
+          [
+            0.4090,
+            0.5180
+          ],
+          [
+            0.1670,
+            0.0400
+          ]
+        ],
+        "ct": {
+          "min": 153,
+          "max": 500
+        }
+      },
+      "streaming": {
+        "renderer": true,
+        "proxy": true
+      }
+    },
+    "config": {
+      "archetype": "sultanbulb",
+      "function": "mixed",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:31:51:c1-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 102,
+      "hue": 9179,
+      "sat": 216,
+      "effect": "none",
+      "xy": [
+        0.5498,
+        0.3900
+      ],
+      "ct": 500,
+      "alert": "select",
+      "colormode": "xy",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:09:27"
+    },
+    "type": "Extended color light",
+    "name": "Ceiling lamp",
+    "modelid": "LCT007",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue color lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 2000,
+        "maxlumen": 800,
+        "colorgamuttype": "B",
+        "colorgamut": [
+          [
+            0.6750,
+            0.3220
+          ],
+          [
+            0.4090,
+            0.5180
+          ],
+          [
+            0.1670,
+            0.0400
+          ]
+        ],
+        "ct": {
+          "min": 153,
+          "max": 500
+        }
+      },
+      "streaming": {
+        "renderer": true,
+        "proxy": true
+      }
+    },
+    "config": {
+      "archetype": "pendantround",
+      "function": "mixed",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:30:60:c3-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 254,
+      "hue": 14988,
+      "sat": 141,
+      "effect": "none",
+      "xy": [
+        0.4575,
+        0.4101
+      ],
+      "ct": 366,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:09:19"
+    },
+    "type": "Extended color light",
+    "name": "Ceiling lamp",
+    "modelid": "LCT007",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue color lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 2000,
+        "maxlumen": 800,
+        "colorgamuttype": "B",
+        "colorgamut": [
+          [
+            0.6750,
+            0.3220
+          ],
+          [
+            0.4090,
+            0.5180
+          ],
+          [
+            0.1670,
+            0.0400
+          ]
+        ],
+        "ct": {
+          "min": 153,
+          "max": 500
+        }
+      },
+      "streaming": {
+        "renderer": true,
+        "proxy": true
+      }
+    },
+    "config": {
+      "archetype": "pendantround",
+      "function": "mixed",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:51:fe:29-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 42,
+      "ct": 366,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:07:10"
+    },
+    "type": "Color temperature light",
+    "name": "By the sink",
+    "modelid": "LTW001",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 806,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "pendantround",
+      "function": "functional",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:26:b2:50-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 42,
+      "ct": 366,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:09:02"
+    },
+    "type": "Color temperature light",
+    "name": "By the shower",
+    "modelid": "LTW001",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 806,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "pendantround",
+      "function": "functional",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:25:d3:0c-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 254,
+      "ct": 366,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:08:54"
+    },
+    "type": "Color temperature light",
+    "name": "Over the kitchen table",
+    "modelid": "LTW001",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 806,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "ceilinground",
+      "function": "functional",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:25:e6:4d-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": true,
+      "bri": 254,
+      "ct": 336,
+      "alert": "none",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:08:46"
+    },
+    "type": "Color temperature light",
+    "name": "Living room side lamp bottom",
+    "modelid": "LTW001",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 806,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "sultanbulb",
+      "function": "functional",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:2a:c1:ff-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": true,
+      "bri": 254,
+      "ct": 336,
+      "alert": "none",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:08:38"
+    },
+    "type": "Color temperature light",
+    "name": "Living room side lamp top",
+    "modelid": "LTW001",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 806,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "sultanbulb",
+      "function": "functional",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:2a:be:df-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": true,
+      "bri": 254,
+      "ct": 336,
+      "alert": "none",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:07:35"
+    },
+    "type": "Color temperature light",
+    "name": "Living room side lamp mid",
+    "modelid": "LTW001",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 806,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "sultanbulb",
+      "function": "functional",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:2e:61:4b-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 254,
+      "ct": 447,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:08:32"
+    },
+    "type": "Color temperature light",
+    "name": "By the coffee grinder",
+    "modelid": "LTW001",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 806,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "tableshade",
+      "function": "functional",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:2a:c1:96-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": true,
+      "bri": 254,
+      "ct": 336,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:08:25"
+    },
+    "type": "Color temperature light",
+    "name": "Office lamp",
+    "modelid": "LTW001",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance lamp",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 806,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "tableshade",
+      "function": "functional",
+      "direction": "omnidirectional",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:10:2a:c3:af-0b",
+    "swversion": "5.130.1.30000"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 42,
+      "ct": 366,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:07:50"
+    },
+    "type": "Color temperature light",
+    "name": "Mirror mid",
+    "modelid": "LTW013",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance spot",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 250,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "doublespot",
+      "function": "functional",
+      "direction": "downwards",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:02:27:b1:fb-0b",
+    "swversion": "1.50.2_r30933",
+    "swconfigid": "FBD2BF7E",
+    "productid": "Philips-LTW013-1-GU10CTv1"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 42,
+      "ct": 366,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:07:56"
+    },
+    "type": "Color temperature light",
+    "name": "Mirror left",
+    "modelid": "LTW013",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance spot",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 250,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "doublespot",
+      "function": "functional",
+      "direction": "downwards",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:02:27:ba:23-0b",
+    "swversion": "1.50.2_r30933",
+    "swconfigid": "FBD2BF7E",
+    "productid": "Philips-LTW013-1-GU10CTv1"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 42,
+      "ct": 366,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:08:19"
+    },
+    "type": "Color temperature light",
+    "name": "Mirror bathtub",
+    "modelid": "LTW013",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance spot",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 250,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "doublespot",
+      "function": "functional",
+      "direction": "downwards",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:02:27:ba:4b-0b",
+    "swversion": "1.50.2_r30933",
+    "swconfigid": "FBD2BF7E",
+    "productid": "Philips-LTW013-1-GU10CTv1"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 254,
+      "ct": 366,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:08:04"
+    },
+    "type": "Color temperature light",
+    "name": "Kitchen spot right",
+    "modelid": "LTW013",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance spot",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 250,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "doublespot",
+      "function": "functional",
+      "direction": "downwards",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:02:27:ba:8c-0b",
+    "swversion": "1.50.2_r30933",
+    "swconfigid": "FBD2BF7E",
+    "productid": "Philips-LTW013-1-GU10CTv1"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 254,
+      "ct": 366,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:08:12"
+    },
+    "type": "Color temperature light",
+    "name": "Kitchen spot middle",
+    "modelid": "LTW013",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance spot",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 250,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "doublespot",
+      "function": "functional",
+      "direction": "downwards",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:02:27:b9:da-0b",
+    "swversion": "1.50.2_r30933",
+    "swconfigid": "FBD2BF7E",
+    "productid": "Philips-LTW013-1-GU10CTv1"
+  },
+  {
+    "state": {
+      "on": false,
+      "bri": 254,
+      "ct": 366,
+      "alert": "select",
+      "colormode": "ct",
+      "mode": "homeautomation",
+      "reachable": true
+    },
+    "swupdate": {
+      "state": "noupdates",
+      "lastinstall": "2020-03-04T13:07:43"
+    },
+    "type": "Color temperature light",
+    "name": "Kitchen spot left",
+    "modelid": "LTW013",
+    "manufacturername": "Signify Netherlands B.V.",
+    "productname": "Hue ambiance spot",
+    "capabilities": {
+      "certified": true,
+      "control": {
+        "mindimlevel": 1000,
+        "maxlumen": 250,
+        "ct": {
+          "min": 153,
+          "max": 454
+        }
+      },
+      "streaming": {
+        "renderer": false,
+        "proxy": false
+      }
+    },
+    "config": {
+      "archetype": "doublespot",
+      "function": "functional",
+      "direction": "downwards",
+      "startup": {
+        "mode": "safety",
+        "configured": true
+      }
+    },
+    "uniqueid": "00:17:88:01:02:27:ba:18-0b",
+    "swversion": "1.50.2_r30933",
+    "swconfigid": "FBD2BF7E",
+    "productid": "Philips-LTW013-1-GU10CTv1"
+  }
+]

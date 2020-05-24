@@ -1,4 +1,4 @@
 .username
 .DS_Store
-.stack-work
-.docker-cache
+src/*/bin
+src/*/obj

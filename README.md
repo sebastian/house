@@ -23,7 +23,7 @@ It's a fairly standard dotnet core application.
 
 ```
 dotnet restore
-dotnet run
+username=<HUE-PASSWORD> dotnet run --project src/Web/
 ```
 
 Should be all that is required.

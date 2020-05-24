@@ -23,23 +23,32 @@ module private Internals =
             return! getIp ()
     }
 
+    let processReading ip = async {
+        let! latestReading = Hue.API.getState ip username
+        state <- {state with LastReading = Some latestReading}
+        let! _ =
+            LightRules.deriveChanges latestReading
+            |> List.map (fun (room, lightState) -> async {
+                let! response = Hue.API.setState ip username room lightState
+                let statusCode = response.StatusCode
+                if statusCode < 200 || statusCode > 299
+                then printfn "Unexpected response when trying to set light: %s" (response.Body.ToString())
+                return ()
+            })
+            |> Async.Parallel
+        ()
+    }
+    
     let rec action ip  = async {
         match state.Mode with
         | Manual -> ()
         | Automatic ->
-            let! latestReading = Hue.API.getState ip username
-            state <- {state with LastReading = Some latestReading}
-            let! _ =
-                LightRules.deriveChanges latestReading
-                |> List.map (fun (room, lightState) -> async {
-                    let! response = Hue.API.setState ip username room lightState
-                    let statusCode = response.StatusCode
-                    if statusCode < 200 || statusCode > 299
-                    then printfn "Unexpected response when trying to set light: %s" (response.Body.ToString())
-                    return ()
-                })
-                |> Async.Parallel
-            ()
+            try
+                do! processReading ip
+            with
+            | exn ->
+                printfn "Exception with processing reading: %s. Sleeping 10 minutes and trying again." exn.Message
+                do! Async.Sleep (1000 * 60 * 10)
         do! Async.Sleep 500
         return! action ip
     }

@@ -23,14 +23,18 @@ It's a fairly standard dotnet core application.
 
 ```
 dotnet restore
-username=<HUE-PASSWORD> dotnet run --project src/Web/
+- username=<HUE-PASSWORD> port=5000 dotnet run --project src/Web/
 ```
 
 Should be all that is required.
 
 It expects that you have dotnet core version `3.1.200` or newer.
 
-## Running
+## Preparing the "server"
+
+I deploy the system on a RaspberryPi 3b. The machine is actually
+overkill for the purpose, but that is beside the point. Anything
+similar that you have available should do well. 
 
 __NOTE: This system is NOT designed to be run on a server that is available
 from the internet!__
@@ -50,11 +54,24 @@ Wants=network.target
 
 [Service]
 Type=simple
-ExecStart=/home/chip/house <password>
+ExecStart=/home/pi/house/Web
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
+```
+
+You subsequently need to configure your username and the port you the 
+service to make its web interface available on (default is 5000).
+
+You do this by running `systemctl edit house` on the host that will run
+the system. This will create a configuration overlay that you can ammend
+to make look something like this:
+
+```
+[Service]
+Environment="username=<HUE USERNAME>"
+Environment="PORT=80"
 ```
 
 Then run:
@@ -63,6 +80,16 @@ Then run:
 systemctl enable house
 systemctl start house
 ```
+
+## Deploying
+
+I have created a utility script called [publish-to-pi.sh](publish-to-pi.sh).
+You will have to tweak it to suit your needs, but it will do the following:
+
+- build a version of this app targeting an ARM linux box
+- assume you are running your RaspberryPi at port 10.0.0.150 and upload
+  the build artifact to to `/home/pi/house`
+- restart the service
 
 # History
 

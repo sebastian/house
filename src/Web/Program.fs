@@ -9,11 +9,16 @@ let endpointPipe = pipeline {
     plug requestId
 }
 
+let portNumber () =
+    match System.Environment.GetEnvironmentVariable("PORT") with
+    | null -> "5000"
+    | port -> port
+    
 let app = application {
     pipe_through endpointPipe
     error_handler (fun ex _ -> pipeline { render_html (InternalError.layout ex) })
     use_router Router.appRouter
-    url "http://0.0.0.0:8085/"
+    url (sprintf "http://0.0.0.0:%s/" (portNumber()))
     use_static "static"
     use_gzip
 }

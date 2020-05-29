@@ -21,7 +21,7 @@ module API =
         | Some dateTime -> dateTime
 
     let getIp () = async {
-        let! ipRecords = DiscoveryProvider.AsyncLoad "http://www.meethue.com/api/nupnp"
+        let! ipRecords = DiscoveryProvider.AsyncLoad "https://discovery.meethue.com/"
         let ips = ipRecords |> Array.map (fun entry -> entry.Internalipaddress)
         return
             if Array.length ips > 0

@@ -32,6 +32,19 @@ let index () =
           button [_type "Submit"] [rawText "Toggle mode"]
         ]
       ]
+      div [] (
+        reading.Rooms
+        |> List.map(fun room ->
+          let sensor = room.RoomSensor
+          (room.Name, sensor.Battery)
+        )
+        |> List.filter(snd >> ((>) 30))
+        |> List.map(fun (room, batteryLevel) ->
+          div [] [
+            rawText (sprintf "The battery level of the light sensor in room %s is at %i percent." room batteryLevel)
+          ]
+        )
+      )
     ]
 
 let layout =

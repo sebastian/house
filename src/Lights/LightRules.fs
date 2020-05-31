@@ -61,7 +61,7 @@ module private Internals =
             | now when now > TimeSpan (10, 00, 00) -> 300
             | now when now > TimeSpan (6, 15, 00) -> scaleUp (double minCt) 300. (secondsInWindow 6 10 - 60 * 15) (secondsUntil 10) // When winding down
             | now when now > TimeSpan (6, 00, 00) -> minCt
-            | _ -> 10 // Before 6:00
+            | _ -> maxCt // Before 6:00
 
     let isBedroom room = room.Name = "Bedroom"
 

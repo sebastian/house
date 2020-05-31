@@ -15,7 +15,7 @@ let index () =
           let roomContent =
             match room.LightState with
             | None -> rawText <| sprintf "%s is in an unknown state" room.Name
-            | Some LightState.Off -> rawText <| sprintf "%s has the lights turned off" room.Name
+            | Some (LightState.Off _) -> rawText <| sprintf "%s has the lights turned off" room.Name
             | Some (LightState.On _) -> strong [] [rawText <| sprintf "%s has the lights turned on" room.Name]
           li [] [roomContent]
         )

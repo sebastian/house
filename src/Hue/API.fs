@@ -33,9 +33,8 @@ module API =
         let light = LightProvider.Parse (jsonValue.ToString())
         let state =
             match light.State.On with
-            | false ->  Off
-            | true ->
-                On (light.State.Bri, light.State.Ct)
+            | false ->  Off (light.State.Bri, light.State.Ct)
+            | true -> On (light.State.Bri, light.State.Ct)
         {
             Id = id
             Name = light.Name
@@ -185,7 +184,7 @@ module API =
     let setState ip username (group: Room) (state: LightState) = async {
         let action =
             match state with
-            | Off -> ActionProvider.Action (false, 200, 200)
+            | Off (bri, ct) -> ActionProvider.Action (false, bri, ct)
             | On (bri, ct) -> ActionProvider.Action (true, bri, ct)
         let url = sprintf "http://%s/api/%s/groups/%s/action" ip username group.Id
         return! action.JsonValue.RequestAsync (url, "PUT")

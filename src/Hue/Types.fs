@@ -5,9 +5,12 @@ module Types =
 
     type Bri = int
     type Ct = int
-
+    
+    // We want the brightness and color tone both when
+    // turning a room on and off. Otherwise we get an
+    // odd flickering of color.
     type LightState
-        = Off
+        = Off of Bri * Ct 
         | On of Bri * Ct
 
     type Light = {

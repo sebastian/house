@@ -125,11 +125,6 @@ module private Internals =
             match room.LightState with
             | None -> true
             | Some lightState -> lightState <> newState)
-        |> List.filter (fun (room, _newState) ->
-            match room.LightState, room.RoomSensor.LightLevel with
-            | Some (Off _), Some lightLevel -> lightLevel < 15000
-            | _ -> true
-        )
 
 let deriveChanges (reading: Reading) =
     Internals.planForRooms reading.Rooms
